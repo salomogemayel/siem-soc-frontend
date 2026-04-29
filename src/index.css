@@ -53,6 +53,13 @@
 body {
   margin: 0;
 }
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
 
 #root {
   width: 1126px;
@@ -108,4 +115,24 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #0f172a;
+  color: white;
+  padding: 24px 18px;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  background: #f4f7fb;
 }
