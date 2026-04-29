@@ -1,7 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShieldAlert, Server, ScrollText, Settings } from "lucide-react";
+import {
+    LayoutDashboard,
+    ShieldAlert,
+    Server,
+    ScrollText,
+    Settings,
+    Menu,
+} from "lucide-react";
 
-export default function Sidebar() {
+export default function Sidebar({ collapsed, setCollapsed }) {
     const location = useLocation();
 
     const menus = [
@@ -13,13 +20,25 @@ export default function Sidebar() {
     ];
 
     return (
-        <aside className="sidebar">
-            <div className="sidebar-logo">
-                <div className="logo-icon">S</div>
-                <div>
-                    <h2>SIEM SOC</h2>
-                    <p>Wazuh Dashboard</p>
+        <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+            <div className="sidebar-top">
+                <div className="sidebar-logo">
+                    <div className="logo-icon">S</div>
+
+                    {!collapsed && (
+                        <div>
+                            <h2>SIEM SOC</h2>
+                            <p>Wazuh Dashboard</p>
+                        </div>
+                    )}
                 </div>
+
+                <button
+                    className="sidebar-toggle"
+                    onClick={() => setCollapsed(!collapsed)}
+                >
+                    <Menu size={20} />
+                </button>
             </div>
 
             <nav className="sidebar-menu">
@@ -32,7 +51,7 @@ export default function Sidebar() {
                         }`}
                     >
                         {menu.icon}
-                        <span>{menu.name}</span>
+                        {!collapsed && <span>{menu.name}</span>}
                     </Link>
                 ))}
             </nav>
