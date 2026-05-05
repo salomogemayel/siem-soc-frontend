@@ -1,0 +1,147 @@
+.agents-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.agents-summary-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.agents-summary-card svg {
+    color: #2563eb;
+}
+
+.agents-summary-card.success svg {
+    color: #047857;
+}
+
+.agents-summary-card.danger svg {
+    color: #b91c1c;
+}
+
+.agents-summary-card span {
+    display: block;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.agents-summary-card strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 28px;
+    color: #111827;
+}
+
+.agents-toolbar {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.agents-search {
+    flex: 1;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+}
+
+.agents-search input {
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.agents-toolbar select {
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 12px;
+    outline: none;
+    background: white;
+}
+
+.agents-toolbar button {
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.agents-toolbar .secondary-btn {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.agents-table td {
+    vertical-align: top;
+}
+
+.agent-id {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-badge.disconnected {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.status-badge.never_connected {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.status-badge.unknown {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+@media (max-width: 1000px) {
+    .agents-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .agents-toolbar {
+        flex-direction: column;
+    }
+
+    .agents-toolbar select,
+    .agents-toolbar button {
+        width: 100%;
+    }
+}
