@@ -1,0 +1,144 @@
+.profile-top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.profile-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.profile-card-content {
+    display: flex;
+    gap: 24px;
+    margin-top: 18px;
+}
+
+.profile-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 999px;
+    background: #2563eb;
+    color: white;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.profile-info-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-info-list div {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 0;
+}
+
+.profile-info-list span {
+    color: #64748b;
+}
+
+.profile-info-list strong {
+    color: #111827;
+}
+
+.status-active {
+    color: #047857 !important;
+}
+
+.profile-form {
+    margin-bottom: 20px;
+}
+
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.profile-form label,
+.password-card label {
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.profile-form input,
+.password-card input,
+.security-item select {
+    width: 100%;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 12px;
+    outline: none;
+}
+
+.password-card input {
+    margin-bottom: 14px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.form-actions button,
+.security-item button {
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.form-message {
+    margin: 12px 0;
+    color: #047857;
+}
+
+.security-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 16px 0;
+}
+
+.security-item p {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.security-item button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 1100px) {
+    .profile-top-grid,
+    .profile-bottom-grid,
+    .profile-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card-content {
+        flex-direction: column;
+    }
+}

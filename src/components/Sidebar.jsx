@@ -6,6 +6,10 @@ import {
     ScrollText,
     Settings,
     Menu,
+    User,
+    FileText,
+    Bell,
+    BookOpen
 } from "lucide-react";
 
 export default function Sidebar({ collapsed, setCollapsed }) {
@@ -17,6 +21,10 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         { name: "Agents", path: "/agents", icon: <Server size={18} /> },
         { name: "Rules", path: "/rules", icon: <ScrollText size={18} /> },
         { name: "Manager", path: "/manager", icon: <Settings size={18} /> },
+        { name: "Logs", path: "/logs", icon: <FileText size={18} /> },
+        { name: "Notification", path: "/notifications", icon: <Bell size={18} /> },
+        { name: "Playbook", path: "/playbook", icon: <BookOpen size={18} />},
+        { name: "Profile", path: "/profile", icon: <User size={18} /> },
     ];
 
     return (

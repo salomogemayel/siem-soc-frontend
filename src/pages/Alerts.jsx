@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { getAlerts } from "../api/wazuhApi";
 import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
+import { getAlertSeverity } from "../utils/alertUtils";
 
 import AlertsFilterBar from "../components/alerts/AlertsFilterBar";
 import AlertsSummary from "../components/alerts/AlertsSummary";
@@ -12,37 +14,61 @@ import AlertsTable from "../components/alerts/AlertsTable";
 import Pagination from "../components/Pagination";
 
 const PAGE_SIZE = 20;
+const MAX_RESULT_WINDOW = 100000;
+
+const DEFAULT_SUMMARY = {
+    total: 0,
+    high: 0,
+    medium: 0,
+    low: 0,
+};
 
 export default function Alerts() {
+    const [searchParams] = useSearchParams();
+
     const [alerts, setAlerts] = useState([]);
     const [expanded, setExpanded] = useState(null);
 
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    const [level, setLevel] = useState("");
-    const [search, setSearch] = useState("");
+    const [level, setLevel] = useState(
+        searchParams.get("level") || searchParams.get("severity") || ""
+    );
+
+    const [search, setSearch] = useState(searchParams.get("search") || "");
+
+    const [summary, setSummary] = useState(DEFAULT_SUMMARY);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const totalPages = Math.ceil(total / PAGE_SIZE);
+    const maxAccessiblePages = Math.floor(MAX_RESULT_WINDOW / PAGE_SIZE);
 
-    const fetchAlerts = async () => {
+    const totalPages = Math.min(
+        Math.ceil(total / PAGE_SIZE),
+        maxAccessiblePages
+    );
+
+    const fetchAlerts = async (overrides = {}) => {
         setLoading(true);
         setError("");
 
+        const params = {
+            page,
+            size: PAGE_SIZE,
+            level,
+            search,
+            ...overrides,
+        };
+
         try {
-            const response = await getAlerts({
-                page,
-                size: PAGE_SIZE,
-                level,
-                search,
-            });
+            const response = await getAlerts(params);
 
             if (response.data.success) {
                 setAlerts(response.data.data || []);
                 setTotal(response.data.total || 0);
+                setSummary(response.data.summary || DEFAULT_SUMMARY);
             } else {
                 setError(response.data.error || "Failed to load alerts");
             }
@@ -54,57 +80,76 @@ export default function Alerts() {
     };
 
     useEffect(() => {
-        fetchAlerts();
+        const urlSearch = searchParams.get("search") || "";
+        const urlLevel =
+            searchParams.get("level") || searchParams.get("severity") || "";
+
+        setSearch(urlSearch);
+        setLevel(urlLevel);
+        setPage(1);
+
+        void fetchAlerts({
+            page: 1,
+            search: urlSearch,
+            level: urlLevel,
+        });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
+
+    useEffect(() => {
+        void fetchAlerts();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, level]);
 
     const applySearch = () => {
         setPage(1);
-        fetchAlerts();
+
+        void fetchAlerts({
+            page: 1,
+            search,
+            level,
+        });
     };
 
     const resetFilters = () => {
         setLevel("");
         setSearch("");
         setPage(1);
+
+        void fetchAlerts({
+            page: 1,
+            level: "",
+            search: "",
+        });
     };
-
-    const summary = useMemo(() => {
-        const critical = alerts.filter((a) => Number(a.level) >= 12).length;
-
-        const authFailed = alerts.filter((a) =>
-            String(a.description).toLowerCase().includes("failed")
-        ).length;
-
-        const authSuccess = alerts.filter((a) =>
-            String(a.description).toLowerCase().includes("successful")
-        ).length;
-
-        return {
-            total,
-            critical,
-            authFailed,
-            authSuccess,
-        };
-    }, [alerts, total]);
 
     const levelChartData = useMemo(() => {
         const grouped = {};
 
         alerts.forEach((alert) => {
+            if (!alert.timestamp) return;
+
             const time = new Date(alert.timestamp).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
             });
 
             if (!grouped[time]) {
-                grouped[time] = { time, low: 0, medium: 0, high: 0 };
+                grouped[time] = {
+                    time,
+                    low: 0,
+                    medium: 0,
+                    high: 0,
+                };
             }
 
-            const lvl = Number(alert.level);
+            const severity = getAlertSeverity(alert.level);
 
-            if (lvl >= 10) grouped[time].high += 1;
-            else if (lvl >= 5) grouped[time].medium += 1;
-            else grouped[time].low += 1;
+            if (grouped[time][severity] !== undefined) {
+                grouped[time][severity] += 1;
+            }
         });
 
         return Object.values(grouped).reverse();
@@ -154,7 +199,9 @@ export default function Alerts() {
             start = Math.max(1, end - maxVisible + 1);
         }
 
-        for (let i = start; i <= end; i++) pages.push(i);
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
 
         return pages;
     }, [page, totalPages]);
@@ -166,7 +213,7 @@ export default function Alerts() {
         <>
             <PageHeader
                 title="Security Alerts"
-                description=""
+                description="Monitor detected security alerts from Wazuh Indexer."
             />
 
             <AlertsFilterBar

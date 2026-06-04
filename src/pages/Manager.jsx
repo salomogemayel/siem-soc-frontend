@@ -5,10 +5,12 @@ import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
 
-import ManagerSummary from "../components/manager/ManagerSummary";
-import ManagerStatusList from "../components/manager/ManagerStatusList";
-import ManagerInfoList from "../components/manager/ManagerInfoList";
-import ManagerHealthCard from "../components/manager/ManagerHealthCard";
+import ManagerHealthOverview from "../components/manager/ManagerHealthOverview";
+import ManagerPipelineStatus from "../components/manager/ManagerPipelineStatus";
+import ManagerIndexHealth from "../components/manager/ManagerIndexHealth";
+import ManagerAgentSummary from "../components/manager/ManagerAgentSummary";
+import ManagerRecentActivity from "../components/manager/ManagerRecentActivity";
+import ManagerAdvancedDetails from "../components/manager/ManagerAdvancedDetails";
 
 export default function Manager() {
     const [manager, setManager] = useState(null);
@@ -25,7 +27,7 @@ export default function Manager() {
             if (response.data.success) {
                 setManager(response.data.data);
             } else {
-                setError("Failed to load manager information");
+                setError("Failed to load SIEM health information");
             }
         } catch (err) {
             setError("Cannot connect to Laravel backend API");
@@ -35,30 +37,43 @@ export default function Manager() {
     };
 
     useEffect(() => {
-        fetchManager();
+        void fetchManager();
     }, []);
 
-    if (loading) return <LoadingState message="Loading manager information..." />;
-    if (error) return <ErrorState message={error} />;
+    if (loading) {
+        return <LoadingState message="Loading SIEM health information..." />;
+    }
+
+    if (error) {
+        return <ErrorState message={error} />;
+    }
 
     const status = manager?.status || {};
     const info = manager?.info || {};
+    const health = manager?.health || {};
+    const metrics = manager?.metrics || {};
+    const latest = manager?.latest || {};
+    const indices = manager?.indices || {};
 
     return (
         <>
             <PageHeader
-                title="Wazuh Manager"
-                description=""
+                title="SIEM Health Center"
+                description="Monitor Wazuh infrastructure, data pipeline, index health, and agent connectivity."
             />
 
-            <ManagerSummary info={info} />
+            <ManagerHealthOverview health={health} latest={latest} />
+
+            <ManagerPipelineStatus health={health} />
 
             <div className="manager-content-grid">
-                <ManagerStatusList status={status} />
-                <ManagerInfoList info={info} />
+                <ManagerIndexHealth indices={indices} metrics={metrics} />
+                <ManagerAgentSummary metrics={metrics} />
             </div>
 
-            <ManagerHealthCard onRefresh={fetchManager} />
+            <ManagerRecentActivity latest={latest} metrics={metrics} />
+
+            <ManagerAdvancedDetails status={status} info={info} />
         </>
     );
 }

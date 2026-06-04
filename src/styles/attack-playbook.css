@@ -1,0 +1,351 @@
+.attack-page {
+    width: 100%;
+}
+
+.attack-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.attack-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.attack-breadcrumb strong {
+    color: #0f172a;
+}
+
+.attack-back-btn {
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid #dbeafe;
+    border-radius: 10px;
+    color: #0f172a;
+    background: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.attack-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 22px;
+    align-items: start;
+}
+
+.attack-main {
+    min-width: 0;
+}
+
+.attack-hero {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 26px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.attack-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.attack-hero h1 {
+    margin: 0;
+    font-size: 34px;
+    color: #0f172a;
+}
+
+.attack-hero p {
+    margin: 12px 0 0;
+    color: #475569;
+    line-height: 1.6;
+    max-width: 760px;
+}
+
+.attack-severity {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-weight: 800;
+}
+
+.attack-severity.high {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.attack-severity.medium {
+    background: #ffedd5;
+    color: #f97316;
+}
+
+.attack-severity.low {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.attack-illustration {
+    width: 120px;
+    min-width: 120px;
+    height: 100px;
+    border-radius: 18px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: grid;
+    place-items: center;
+}
+
+.attack-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.attack-summary-card {
+    padding: 14px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.attack-summary-card:last-child {
+    border-right: none;
+}
+
+.attack-summary-card svg {
+    color: #2563eb;
+    margin-bottom: 10px;
+}
+
+.attack-summary-card span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.attack-summary-card strong {
+    color: #0f172a;
+    font-size: 15px;
+}
+
+.attack-tabs {
+    display: flex;
+    gap: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 18px;
+}
+
+.attack-tabs button {
+    border: none;
+    background: transparent;
+    padding: 12px 4px;
+    color: #475569;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.attack-tabs button.active {
+    color: #2563eb;
+    border-bottom: 3px solid #2563eb;
+}
+
+.attack-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.attack-info-card,
+.attack-reference-card,
+.attack-side-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.attack-info-card h2,
+.attack-reference-card h2,
+.attack-side-card h2 {
+    margin: 0 0 14px;
+    color: #0f172a;
+    font-size: 18px;
+}
+
+.check-list,
+.danger-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #475569;
+}
+
+.check-list li,
+.danger-list li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.numbered-list {
+    margin: 0;
+    padding-left: 22px;
+    color: #475569;
+}
+
+.numbered-list li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.attack-reference-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.attack-reference-card p {
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.attack-side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.attack-side-card button {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #0f172a;
+    margin-bottom: 10px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.side-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-btn {
+    width: auto !important;
+    height: auto !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #2563eb !important;
+    background: transparent !important;
+}
+
+.related-alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.related-alert-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.related-alert-item strong {
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.related-alert-item p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    margin-top: 6px;
+    background: #ef4444;
+    flex-shrink: 0;
+}
+
+.dot-1 {
+    background: #f97316;
+}
+
+.dot-2 {
+    background: #eab308;
+}
+
+.dot-3 {
+    background: #22c55e;
+}
+
+@media (max-width: 1200px) {
+    .attack-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .attack-summary-grid,
+    .attack-card-grid,
+    .attack-reference-card {
+        grid-template-columns: 1fr;
+    }
+
+    .attack-summary-card {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .attack-summary-card:last-child {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .attack-topbar,
+    .attack-hero {
+        flex-direction: column;
+    }
+
+    .attack-hero h1 {
+        font-size: 28px;
+    }
+
+    .attack-illustration {
+        width: 100%;
+    }
+}

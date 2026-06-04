@@ -129,3 +129,359 @@
         gap: 16px;
     }
 }
+
+.success {
+    color: #047857 !important;
+}
+
+.warning {
+    color: #b45309 !important;
+}
+
+.danger {
+    color: #b91c1c !important;
+}
+
+/* Health Overview */
+
+.manager-health-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.manager-health-card-v2 {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    min-width: 0;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.manager-health-icon-v2 {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #eff6ff;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.manager-health-icon-v2.success {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.manager-health-icon-v2.warning {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.manager-health-icon-v2.danger {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.manager-health-card-v2 span {
+    display: block;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.manager-health-card-v2 strong {
+    display: block;
+    margin-top: 4px;
+    text-transform: capitalize;
+    font-size: 22px;
+}
+
+.manager-health-card-v2 p {
+    margin: 6px 0 0;
+    color: #94a3b8;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+/* Pipeline */
+
+.manager-pipeline-card {
+    margin-bottom: 20px;
+}
+
+.manager-pipeline-card h2 {
+    margin-bottom: 6px;
+}
+
+.manager-pipeline-card > p {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.pipeline-steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.pipeline-step {
+    position: relative;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 14px;
+    min-width: 0;
+}
+
+.pipeline-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.pipeline-icon.success {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.pipeline-icon.warning {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.pipeline-icon.danger {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.pipeline-step strong {
+    display: block;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.pipeline-step span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.pipeline-step small {
+    text-transform: capitalize;
+    font-weight: 700;
+}
+
+/* Index Health */
+
+.manager-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.manager-card-title h2 {
+    margin: 0;
+}
+
+.manager-card-title svg {
+    color: #2563eb;
+}
+
+.manager-index-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.manager-index-item {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr 0.8fr 1.2fr;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.manager-index-item span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.manager-index-item strong {
+    color: #111827;
+    word-break: break-word;
+}
+
+/* Agent Summary */
+
+.manager-agent-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.manager-agent-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.manager-agent-card svg {
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+.manager-agent-card span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.manager-agent-card strong {
+    display: block;
+    margin-top: 4px;
+    color: #111827;
+    font-size: 24px;
+}
+
+/* Recent Activity */
+
+.manager-recent-card {
+    margin-bottom: 20px;
+}
+
+.manager-activity-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.manager-activity-item {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.manager-activity-item span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.manager-activity-item strong {
+    display: block;
+    margin-top: 6px;
+    color: #111827;
+    word-break: break-word;
+}
+
+.manager-activity-item p {
+    margin: 6px 0 0;
+    font-size: 13px;
+}
+
+/* Advanced */
+
+.manager-advanced-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+}
+
+.manager-advanced-header h2 {
+    margin: 0;
+}
+
+.manager-advanced-header p {
+    margin: 6px 0 0;
+}
+
+.manager-advanced-header button {
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.manager-advanced-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.manager-detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.manager-detail-row span {
+    color: #64748b;
+}
+
+.manager-detail-row strong {
+    color: #111827;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* Responsive */
+
+@media (max-width: 1200px) {
+    .manager-health-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pipeline-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .manager-activity-list {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-index-item {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+    .manager-health-grid,
+    .manager-content-grid,
+    .manager-advanced-grid,
+    .manager-agent-grid,
+    .pipeline-steps,
+    .manager-index-item {
+        grid-template-columns: 1fr;
+    }
+
+    .manager-advanced-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

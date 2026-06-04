@@ -3,12 +3,17 @@ import { useEffect, useMemo, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
+import { getAlertSeverity } from "../utils/alertUtils";
 import { getAlerts, getAgents, getManager, getRules } from "../api/wazuhApi";
 
 import DashboardStats from "../components/dashboard/DashboardStats";
 import DashboardCharts from "../components/dashboard/DashboardCharts";
 import RecentAlertsTable from "../components/dashboard/RecentAlertsTable";
 import ManagerHealthMini from "../components/dashboard/ManagerHealthMini";
+import AlertSeverityDonut from "../components/dashboard/AlertSeverityDonut";
+import AlertEvolutionChart from "../components/dashboard/AlertEvolutionChart";
+import TopMitreTactics from "../components/dashboard/TopMitreTactics";
+import TopAgentsChart from "../components/dashboard/TopAgentsChart";
 
 export default function Dashboard() {
     const [alerts, setAlerts] = useState([]);
@@ -67,8 +72,17 @@ export default function Dashboard() {
         return agents.filter((agent) => agent.status === "active").length;
     }, [agents]);
 
+    // PASTE THIS IN ITS PLACE:
     const highAlerts = useMemo(() => {
-        return alerts.filter((alert) => Number(alert.level) >= 7).length;
+        return alerts.filter((alert) => getAlertSeverity(alert.level) === "high").length;
+    }, [alerts]);
+
+    const mediumAlerts = useMemo(() => {
+        return alerts.filter((alert) => getAlertSeverity(alert.level) === "medium").length;
+    }, [alerts]);
+
+    const lowAlerts = useMemo(() => {
+        return alerts.filter((alert) => getAlertSeverity(alert.level) === "low").length;
     }, [alerts]);
 
     const alertEvolutionData = useMemo(() => {
@@ -108,30 +122,55 @@ export default function Dashboard() {
         }));
     }, [alerts]);
 
+    // Add this to Dashboard.jsx
+    const topMitreData = useMemo(() => {
+        const grouped = {};
+
+        alerts.forEach((alert) => {
+            // Some alerts might not have MITRE data, so we check first
+            if (alert.tactic && alert.tactic.length > 0) {
+                alert.tactic.forEach((tacticName) => {
+                    grouped[tacticName] = (grouped[tacticName] || 0) + 1;
+                });
+            }
+        });
+
+        // Convert to array, sort by highest count, and take the top 5
+        return Object.entries(grouped)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+    }, [alerts]);
+
     if (loading) return <LoadingState message="Loading dashboard data..." />;
     if (error) return <ErrorState message={error} />;
 
     return (
         <>
-            <PageHeader
-                title="Dashboard Overview"
-                description=""
-            />
+            <PageHeader title="Dashboard Overview" description="" />
 
+            {/* Note: I assume DashboardStats already has your new High/Med/Low summary passed to it! */}
             <DashboardStats
                 totalAlerts={totalAlerts}
                 highAlerts={highAlerts}
+                mediumAlerts={mediumAlerts}
+                lowAlerts={lowAlerts}
                 totalAgents={totalAgents}
-                activeAgents={activeAgents}
-                totalRules={totalRules}
-                manager={manager}
             />
 
-            <DashboardCharts
-                alertEvolutionData={alertEvolutionData}
-                topAgentsData={topAgentsData}
-            />
+            {/* ROW 2: Evolution (2/3 width) and Donut (1/3 width) */}
+            <div className="dashboard-grid">
+                <AlertEvolutionChart data={alertEvolutionData} />
+                <AlertSeverityDonut high={highAlerts} medium={mediumAlerts} low={lowAlerts} />
+            </div>
 
+            {/* ROW 3: Top Agents and Top MITRE (Both Normal, sitting side-by-side) */}
+            <div className="dashboard-grid">
+                <TopAgentsChart data={topAgentsData} />
+                <TopMitreTactics data={topMitreData} />
+            </div>
+
+            {/* ROW 4: Details */}
             <div className="dashboard-grid">
                 <RecentAlertsTable alerts={alerts} />
                 <ManagerHealthMini manager={manager} onRefresh={fetchDashboardData} />

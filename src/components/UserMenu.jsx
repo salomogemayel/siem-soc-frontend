@@ -5,10 +5,10 @@ import UserDropdown from "./UserDropdown";
 export default function UserMenu() {
     const [open, setOpen] = useState(false);
 
-    const user = {
-        name: "Admin User",
-        role: "SOC Analyst",
-    };
+    const storedUser = localStorage.getItem("auth_user");
+    const user = storedUser
+        ? JSON.parse(storedUser)
+        : { name: "Unknown User", role: "SOC User" };
 
     return (
         <div className="navbar-user-container">
@@ -19,7 +19,7 @@ export default function UserMenu() {
 
                 <div className="user-info">
                     <span className="user-name">{user.name}</span>
-                    <span className="user-role">{user.role}</span>
+                    <span className="user-role">{user.role || "SOC Analyst"}</span>
                 </div>
             </div>
 
