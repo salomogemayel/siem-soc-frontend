@@ -1,9 +1,19 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+} from "recharts";
 
 export default function AlertEvolutionChart({ data }) {
     return (
-        <div className="chart-card wide">
-            <h3>Alert Level Evolution</h3>
+        <div className="h-full w-full">
+            <h3 className="mb-4 text-base font-semibold text-slate-900">
+                Alert Level Evolution
+            </h3>
 
             <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={data}>

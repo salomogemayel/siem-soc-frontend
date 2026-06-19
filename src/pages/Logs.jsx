@@ -39,6 +39,7 @@ export default function Logs() {
     const [decoder, setDecoder] = useState("");
     const [program, setProgram] = useState("");
     const [timeRange, setTimeRange] = useState("1h");
+    const [logType, setLogType] = useState("");
     const [viewMode, setViewMode] = useState("simple");
 
     const [filterOptions, setFilterOptions] = useState({
@@ -81,6 +82,7 @@ export default function Logs() {
                 selectedTimeRange === "custom" && selectedDateTo
                     ? new Date(selectedDateTo).toISOString()
                     : "",
+            logType,
             ...overrides,
         };
 
@@ -147,6 +149,7 @@ export default function Logs() {
         setTimeRange("1h");
         setDateFrom("");
         setDateTo("");
+        setLogType("");
 
         fetchLogs({
             page: 1,
@@ -158,6 +161,7 @@ export default function Logs() {
             timeRange: "1h",
             dateFrom: "",
             dateTo: "",
+            logType: "",
         });
     };
 
@@ -271,10 +275,10 @@ export default function Logs() {
     const paginationTotalPages = Math.min(totalPages, maxAccessiblePages || 1);
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="Raw Logs"
-                description="Explore raw security logs collected and archived by Wazuh."
+                description="Telusuri log keamanan yang tersimpan di Wazuh"
             />
 
             <LogsSummary insights={logInsights} />
@@ -296,18 +300,19 @@ export default function Logs() {
                 setDateFrom={setDateFrom}
                 dateTo={dateTo}
                 setDateTo={setDateTo}
+                logType={logType}
+                setLogType={setLogType}
                 viewMode={viewMode}
                 setViewMode={setViewMode}
                 filterOptions={filterOptions}
                 setPage={setPage}
                 onApply={applySearch}
                 onReset={resetFilters}
-                onQuickFilter={handleQuickFilter}
                 onExportCSV={exportCSV}
                 onExportJSON={exportJSON}
             />
 
-            <div className="card">
+            <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
                 <LogsTable
                     logs={logs}
                     expanded={expanded}
@@ -316,7 +321,7 @@ export default function Logs() {
                     viewMode={viewMode}
                 />
 
-                <div className="logs-pagination-footer">
+                <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 lg:flex-row lg:items-center lg:justify-between">
                     <Pagination
                         page={page}
                         totalPages={paginationTotalPages}
@@ -324,13 +329,14 @@ export default function Logs() {
                         setPage={setPage}
                     />
 
-                    <div className="logs-pagination-info">
-                        Showing <strong>{logs.length}</strong> logs • Total{" "}
-                        <strong>{totalLabel}</strong> • Page{" "}
-                        <strong>{page}</strong> of <strong>{paginationTotalPages || 1}</strong>
+                    <div className="text-sm text-slate-500">
+                        Showing <strong className="text-slate-900">{logs.length}</strong> logs • Total{" "}
+                        <strong className="text-slate-900">{totalLabel}</strong> • Page{" "}
+                        <strong className="text-slate-900">{page}</strong> of{" "}
+                        <strong className="text-slate-900">{paginationTotalPages || 1}</strong>
                     </div>
                 </div>
             </div>
-        </>
+        </section>
     );
 }

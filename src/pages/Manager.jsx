@@ -56,7 +56,7 @@ export default function Manager() {
     const indices = manager?.indices || {};
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="SIEM Health Center"
                 description="Monitor Wazuh infrastructure, data pipeline, index health, and agent connectivity."
@@ -66,14 +66,19 @@ export default function Manager() {
 
             <ManagerPipelineStatus health={health} />
 
-            <div className="manager-content-grid">
-                <ManagerIndexHealth indices={indices} metrics={metrics} />
-                <ManagerAgentSummary metrics={metrics} />
+            <div className="grid grid-cols-1 gap-[18px] xl:grid-cols-12">
+                <div className="xl:col-span-7">
+                    <ManagerIndexHealth indices={indices} metrics={metrics} />
+                </div>
+
+                <div className="xl:col-span-5">
+                    <ManagerAgentSummary metrics={metrics} />
+                </div>
             </div>
 
             <ManagerRecentActivity latest={latest} metrics={metrics} />
 
             <ManagerAdvancedDetails status={status} info={info} />
-        </>
+        </section>
     );
 }

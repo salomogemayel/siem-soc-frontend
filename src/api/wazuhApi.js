@@ -1,14 +1,51 @@
 import api from "./axios";
 
 export const getRules = () => api.get("/wazuh/rules");
+
 export const getManager = () => api.get("/wazuh/manager");
-export const getAlerts = ({ page = 1, size = 20, level = "", search = "" }) =>
+
+export const getAlerts = ({
+                              page = 1,
+                              size = 20,
+                              level = "",
+                              search = "",
+                              agent = "",
+                              ruleId = "",
+                              mitre = "",
+                              group = "",
+                              timeRange = "24h",
+                              dateFrom = "",
+                              dateTo = "",
+                          } = {}) =>
     api.get("/wazuh/alerts", {
-        params: { page, size, level,search },
+        params: {
+            page,
+            size,
+            level,
+            search,
+            agent,
+            rule_id: ruleId,
+            mitre,
+            group,
+            time_range: timeRange,
+            date_from: dateFrom,
+            date_to: dateTo,
+        },
     });
-export const getAgents = ({ page = 1, size = 20, search = "", status = "" }) =>
+
+export const getAgents = ({
+                              page = 1,
+                              size = 20,
+                              search = "",
+                              status = "",
+                          } = {}) =>
     api.get("/wazuh/agents", {
-        params: { page, size, search, status },
+        params: {
+            page,
+            size,
+            search,
+            status,
+        },
     });
 
 export const getLogs = ({
@@ -22,6 +59,7 @@ export const getLogs = ({
                             timeRange = "24h",
                             dateFrom = "",
                             dateTo = "",
+                            logType = "",
                         } = {}) =>
     api.get("/wazuh/logs", {
         params: {
@@ -35,6 +73,7 @@ export const getLogs = ({
             time_range: timeRange,
             date_from: dateFrom,
             date_to: dateTo,
+            log_type: logType,
         },
     });
 

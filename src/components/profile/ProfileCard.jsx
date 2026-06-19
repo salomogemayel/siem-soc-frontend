@@ -1,39 +1,42 @@
 import { User } from "lucide-react";
 
 export default function ProfileCard({ user }) {
-    return (
-        <div className="profile-card card">
-            <h2>Account Information</h2>
+    const items = [
+        ["Full Name", user?.name || "-"],
+        ["Email", user?.email || "-"],
+        ["Role", user?.role || "SOC Analyst"],
+        ["Last Login", user?.last_login_at || "-"],
+    ];
 
-            <div className="profile-card-content">
-                <div className="profile-avatar">
-                    <User size={48} />
+    return (
+        <div className="h-full rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
+            <h2 className="m-0 text-lg font-semibold text-slate-900">
+                Account Information
+            </h2>
+
+            <div className="mt-4 flex flex-col gap-4">
+                <div className="grid h-20 w-20 place-items-center rounded-2xl bg-blue-50 text-blue-600">
+                    <User size={44} />
                 </div>
 
-                <div className="profile-info-list">
-                    <div>
-                        <span>Full Name</span>
-                        <strong>{user?.name || "-"}</strong>
-                    </div>
+                <div className="space-y-2.5">
+                    {items.map(([label, value]) => (
+                        <div
+                            key={label}
+                            className="flex justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm"
+                        >
+                            <span className="text-slate-500">{label}</span>
+                            <strong className="break-all text-right text-slate-900">
+                                {value}
+                            </strong>
+                        </div>
+                    ))}
 
-                    <div>
-                        <span>Email</span>
-                        <strong>{user?.email || "-"}</strong>
-                    </div>
-
-                    <div>
-                        <span>Role</span>
-                        <strong>{user?.role || "SOC Analyst"}</strong>
-                    </div>
-
-                    <div>
-                        <span>Status</span>
-                        <strong className="status-active">{user?.status || "active"}</strong>
-                    </div>
-
-                    <div>
-                        <span>Last Login</span>
-                        <strong>{user?.last_login_at || "-"}</strong>
+                    <div className="flex justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
+                        <span className="text-slate-500">Status</span>
+                        <strong className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+                            {user?.status || "active"}
+                        </strong>
                     </div>
                 </div>
             </div>

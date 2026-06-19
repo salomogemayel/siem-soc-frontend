@@ -45,23 +45,28 @@ export default function Profile() {
     if (!user) return <ErrorState message="Profile data not found" />;
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="My Profile"
                 description=""
             />
 
-            <div className="profile-top-grid">
-                <ProfileCard user={user} />
-                <ChangePasswordForm />
+            <div className="grid grid-cols-1 gap-[18px] xl:grid-cols-12">
+                <div className="xl:col-span-5">
+                    <ProfileCard user={user} />
+                </div>
+
+                <div className="xl:col-span-7">
+                    <ChangePasswordForm />
+                </div>
             </div>
 
             <EditProfileForm user={user} onUpdated={fetchProfile} />
 
-            <div className="profile-bottom-grid">
+            <div className="grid grid-cols-1 gap-[18px] xl:grid-cols-2">
                 <SecuritySettings />
                 <SessionTable />
             </div>
-        </>
+        </section>
     );
 }

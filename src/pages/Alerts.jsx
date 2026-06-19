@@ -1,20 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 
 import { getAlerts } from "../api/wazuhApi";
 import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
-import { getAlertSeverity } from "../utils/alertUtils";
-
-import AlertsFilterBar from "../components/alerts/AlertsFilterBar";
 import AlertsSummary from "../components/alerts/AlertsSummary";
 import AlertsCharts from "../components/alerts/AlertsCharts";
-import AlertsTable from "../components/alerts/AlertsTable";
-import Pagination from "../components/Pagination";
-
-const PAGE_SIZE = 20;
-const MAX_RESULT_WINDOW = 100000;
+import AlertsTabs from "../components/alerts/AlertsTabs";
+import { getAlertSeverity } from "../utils/alertUtils";
 
 const DEFAULT_SUMMARY = {
     total: 0,
@@ -24,53 +17,27 @@ const DEFAULT_SUMMARY = {
 };
 
 export default function Alerts() {
-    const [searchParams] = useSearchParams();
-
     const [alerts, setAlerts] = useState([]);
-    const [expanded, setExpanded] = useState(null);
-
-    const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
-
-    const [level, setLevel] = useState(
-        searchParams.get("level") || searchParams.get("severity") || ""
-    );
-
-    const [search, setSearch] = useState(searchParams.get("search") || "");
-
     const [summary, setSummary] = useState(DEFAULT_SUMMARY);
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const maxAccessiblePages = Math.floor(MAX_RESULT_WINDOW / PAGE_SIZE);
-
-    const totalPages = Math.min(
-        Math.ceil(total / PAGE_SIZE),
-        maxAccessiblePages
-    );
-
-    const fetchAlerts = async (overrides = {}) => {
+    const fetchOverview = async () => {
         setLoading(true);
         setError("");
 
-        const params = {
-            page,
-            size: PAGE_SIZE,
-            level,
-            search,
-            ...overrides,
-        };
-
         try {
-            const response = await getAlerts(params);
+            const response = await getAlerts({
+                page: 1,
+                size: 100,
+                timeRange: "24h",
+            });
 
             if (response.data.success) {
                 setAlerts(response.data.data || []);
-                setTotal(response.data.total || 0);
                 setSummary(response.data.summary || DEFAULT_SUMMARY);
             } else {
-                setError(response.data.error || "Failed to load alerts");
+                setError(response.data.error || "Failed to load alert overview");
             }
         } catch (err) {
             setError("Cannot connect to Laravel backend API");
@@ -80,50 +47,8 @@ export default function Alerts() {
     };
 
     useEffect(() => {
-        const urlSearch = searchParams.get("search") || "";
-        const urlLevel =
-            searchParams.get("level") || searchParams.get("severity") || "";
-
-        setSearch(urlSearch);
-        setLevel(urlLevel);
-        setPage(1);
-
-        void fetchAlerts({
-            page: 1,
-            search: urlSearch,
-            level: urlLevel,
-        });
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchParams]);
-
-    useEffect(() => {
-        void fetchAlerts();
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, level]);
-
-    const applySearch = () => {
-        setPage(1);
-
-        void fetchAlerts({
-            page: 1,
-            search,
-            level,
-        });
-    };
-
-    const resetFilters = () => {
-        setLevel("");
-        setSearch("");
-        setPage(1);
-
-        void fetchAlerts({
-            page: 1,
-            level: "",
-            search: "",
-        });
-    };
+        void fetchOverview();
+    }, []);
 
     const levelChartData = useMemo(() => {
         const grouped = {};
@@ -163,91 +88,107 @@ export default function Alerts() {
             grouped[name] = (grouped[name] || 0) + 1;
         });
 
-        return Object.entries(grouped).map(([name, value]) => ({
-            name,
-            value,
-        }));
+        return Object.entries(grouped)
+            .map(([name, value]) => ({
+                name,
+                value,
+            }))
+            .sort((a, b) => b.value - a.value);
     }, [alerts]);
 
-    const mitreData = useMemo(() => {
-        const grouped = {};
+    const categoryData = useMemo(() => {
+        const grouped = {
+            Authentication: 0,
+            "Privilege Activity": 0,
+            "Web Activity": 0,
+            "Database Activity": 0,
+            "File Integrity": 0,
+            System: 0,
+            Other: 0,
+        };
 
         alerts.forEach((alert) => {
-            if (alert.technique?.length) {
-                alert.technique.forEach((technique) => {
-                    grouped[technique] = (grouped[technique] || 0) + 1;
-                });
+            const groups = Array.isArray(alert.groups) ? alert.groups : [];
+            const groupText = groups.join(" ").toLowerCase();
+
+            if (groupText.includes("authentication") || groupText.includes("pam")) {
+                grouped.Authentication += 1;
+            } else if (groupText.includes("sudo")) {
+                grouped["Privilege Activity"] += 1;
+            } else if (
+                groupText.includes("web") ||
+                groupText.includes("apache") ||
+                groupText.includes("accesslog")
+            ) {
+                grouped["Web Activity"] += 1;
+            } else if (groupText.includes("mysql")) {
+                grouped["Database Activity"] += 1;
+            } else if (groupText.includes("syscheck")) {
+                grouped["File Integrity"] += 1;
+            } else if (groupText.includes("syslog") || groupText.includes("system")) {
+                grouped.System += 1;
+            } else {
+                grouped.Other += 1;
             }
         });
 
-        const data = Object.entries(grouped).map(([name, value]) => ({
-            name,
-            value,
-        }));
-
-        return data.length ? data : [{ name: "No MITRE Data", value: 1 }];
+        return Object.entries(grouped)
+            .map(([name, value]) => ({
+                name,
+                value,
+            }))
+            .filter((item) => item.value > 0)
+            .sort((a, b) => b.value - a.value);
     }, [alerts]);
 
-    const pageNumbers = useMemo(() => {
-        const pages = [];
-        const maxVisible = 5;
+    const topRulesData = useMemo(() => {
+        const grouped = {};
 
-        let start = Math.max(1, page - 2);
-        let end = Math.min(totalPages, start + maxVisible - 1);
+        alerts.forEach((alert) => {
+            const id = alert.rule_id || "-";
 
-        if (end - start < maxVisible - 1) {
-            start = Math.max(1, end - maxVisible + 1);
-        }
+            if (!grouped[id]) {
+                grouped[id] = {
+                    rule_id: id,
+                    description: alert.description || "-",
+                    level: alert.level || 0,
+                    count: 0,
+                };
+            }
 
-        for (let i = start; i <= end; i++) {
-            pages.push(i);
-        }
+            grouped[id].count += 1;
+        });
 
-        return pages;
-    }, [page, totalPages]);
+        return Object.values(grouped)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+    }, [alerts]);
 
-    if (loading) return <LoadingState message="Loading alerts..." />;
+    const recentHighAlerts = useMemo(() => {
+        return alerts.filter((alert) => Number(alert.level) >= 10).slice(0, 5);
+    }, [alerts]);
+
+    if (loading) return <LoadingState message="Loading alert overview..." />;
     if (error) return <ErrorState message={error} />;
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="Security Alerts"
                 description="Monitor detected security alerts from Wazuh Indexer."
             />
 
-            <AlertsFilterBar
-                search={search}
-                setSearch={setSearch}
-                level={level}
-                setLevel={setLevel}
-                setPage={setPage}
-                onApply={applySearch}
-                onReset={resetFilters}
-            />
+            <AlertsTabs />
 
             <AlertsSummary summary={summary} />
 
             <AlertsCharts
                 levelChartData={levelChartData}
                 topAgentsData={topAgentsData}
-                mitreData={mitreData}
+                categoryData={categoryData}
+                topRulesData={topRulesData}
+                recentHighAlerts={recentHighAlerts}
             />
-
-            <div className="card">
-                <AlertsTable
-                    alerts={alerts}
-                    expanded={expanded}
-                    setExpanded={setExpanded}
-                />
-
-                <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    pageNumbers={pageNumbers}
-                    setPage={setPage}
-                />
-            </div>
-        </>
+        </section>
     );
 }

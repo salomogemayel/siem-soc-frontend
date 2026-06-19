@@ -19,35 +19,58 @@ export default function ManagerIndexHealth({ indices, metrics }) {
     ];
 
     return (
-        <div className="card">
-            <div className="manager-card-title">
-                <Database size={20} />
-                <h2>Index Health</h2>
+        <div className="h-full rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
+            <div className="mb-4 flex items-center gap-2">
+                <Database size={20} className="text-blue-600" />
+                <h2 className="m-0 text-lg font-semibold text-slate-900">
+                    Index Health
+                </h2>
             </div>
 
-            <div className="manager-index-list">
+            <div className="space-y-3">
                 {rows.map((row) => (
-                    <div className="manager-index-item" key={row.index}>
+                    <div
+                        key={row.index}
+                        className="grid grid-cols-1 gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4 lg:grid-cols-4"
+                    >
                         <div>
-                            <strong>{row.name}</strong>
-                            <span>{row.index}</span>
+                            <strong className="block text-sm font-semibold text-slate-900">
+                                {row.name}
+                            </strong>
+                            <span className="text-xs text-slate-500">
+                                {row.index}
+                            </span>
                         </div>
 
                         <div>
-                            <span>Status</span>
-                            <strong className={row.available ? "success" : "danger"}>
+                            <span className="block text-xs font-medium text-slate-500">
+                                Status
+                            </span>
+                            <strong
+                                className={`text-sm font-bold ${
+                                    row.available ? "text-emerald-700" : "text-red-700"
+                                }`}
+                            >
                                 {row.available ? "Available" : "Unavailable"}
                             </strong>
                         </div>
 
                         <div>
-                            <span>Last 24h</span>
-                            <strong>{row.count ?? 0}</strong>
+                            <span className="block text-xs font-medium text-slate-500">
+                                Last 24h
+                            </span>
+                            <strong className="text-sm font-bold text-slate-900">
+                                {row.count ?? 0}
+                            </strong>
                         </div>
 
                         <div>
-                            <span>Latest</span>
-                            <strong>{row.latest || "-"}</strong>
+                            <span className="block text-xs font-medium text-slate-500">
+                                Latest
+                            </span>
+                            <strong className="break-words text-sm font-bold text-slate-900">
+                                {row.latest || "-"}
+                            </strong>
                         </div>
                     </div>
                 ))}

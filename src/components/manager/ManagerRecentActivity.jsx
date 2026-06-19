@@ -20,18 +20,29 @@ export default function ManagerRecentActivity({ latest, metrics }) {
     ];
 
     return (
-        <div className="card manager-recent-card">
-            <div className="manager-card-title">
-                <Clock size={20} />
-                <h2>Recent System Activity</h2>
+        <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
+            <div className="mb-4 flex items-center gap-2">
+                <Clock size={20} className="text-blue-600" />
+                <h2 className="m-0 text-lg font-semibold text-slate-900">
+                    Recent System Activity
+                </h2>
             </div>
 
-            <div className="manager-activity-list">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
                 {activities.map((item) => (
-                    <div className="manager-activity-item" key={item.label}>
-                        <span>{item.label}</span>
-                        <strong>{item.value}</strong>
-                        <p>{item.detail}</p>
+                    <div
+                        key={item.label}
+                        className="rounded-xl border border-slate-100 bg-slate-50 p-4"
+                    >
+                        <span className="text-sm font-medium text-slate-500">
+                            {item.label}
+                        </span>
+                        <strong className="mt-1 block break-words text-base font-bold text-slate-900">
+                            {item.value}
+                        </strong>
+                        <p className="m-0 mt-1 text-sm text-slate-500">
+                            {item.detail}
+                        </p>
                     </div>
                 ))}
             </div>

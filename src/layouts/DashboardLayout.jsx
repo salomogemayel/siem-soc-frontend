@@ -4,15 +4,15 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 export default function DashboardLayout() {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
 
     return (
-        <div className={`app-layout ${collapsed ? "sidebar-collapsed" : ""}`}>
+        <div className="flex min-h-screen w-full bg-[#f4f7fb]">
             <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
-            <main className="main-content">
+            <main className="min-w-0 flex-1">
                 <Navbar />
-                <div className="page-content">
+                <div className="p-5 md:p-7">
                     <Outlet />
                 </div>
             </main>

@@ -7,13 +7,13 @@ import { getAlertSeverity } from "../utils/alertUtils";
 import { getAlerts, getAgents, getManager, getRules } from "../api/wazuhApi";
 
 import DashboardStats from "../components/dashboard/DashboardStats";
-import DashboardCharts from "../components/dashboard/DashboardCharts";
 import RecentAlertsTable from "../components/dashboard/RecentAlertsTable";
 import ManagerHealthMini from "../components/dashboard/ManagerHealthMini";
 import AlertSeverityDonut from "../components/dashboard/AlertSeverityDonut";
 import AlertEvolutionChart from "../components/dashboard/AlertEvolutionChart";
 import TopMitreTactics from "../components/dashboard/TopMitreTactics";
-import TopAgentsChart from "../components/dashboard/TopAgentsChart";
+import AttackTypeChart from "../components/dashboard/AttackTypeChart.jsx";
+import {getAttackType} from "../utils/attackTypeUtils.js";
 
 export default function Dashboard() {
     const [alerts, setAlerts] = useState([]);
@@ -108,21 +108,19 @@ export default function Dashboard() {
         return Object.values(grouped).reverse();
     }, [alerts]);
 
-    const topAgentsData = useMemo(() => {
+    const attackTypeData = useMemo(() => {
         const grouped = {};
 
         alerts.forEach((alert) => {
-            const name = alert.agent_name || "Unknown";
-            grouped[name] = (grouped[name] || 0) + 1;
+            const attackType = getAttackType(alert);
+            grouped[attackType] = (grouped[attackType] || 0) + 1;
         });
 
-        return Object.entries(grouped).map(([name, count]) => ({
-            name,
-            alerts: count,
-        }));
+        return Object.entries(grouped)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count);
     }, [alerts]);
 
-    // Add this to Dashboard.jsx
     const topMitreData = useMemo(() => {
         const grouped = {};
 
@@ -149,31 +147,46 @@ export default function Dashboard() {
         <>
             <PageHeader title="Dashboard Overview" description="" />
 
-            {/* Note: I assume DashboardStats already has your new High/Med/Low summary passed to it! */}
             <DashboardStats
                 totalAlerts={totalAlerts}
                 highAlerts={highAlerts}
-                mediumAlerts={mediumAlerts}
-                lowAlerts={lowAlerts}
+                attackTypeCount={attackTypeData.length}
                 totalAgents={totalAgents}
+                activeAgents={activeAgents}
             />
 
-            {/* ROW 2: Evolution (2/3 width) and Donut (1/3 width) */}
-            <div className="dashboard-grid">
-                <AlertEvolutionChart data={alertEvolutionData} />
-                <AlertSeverityDonut high={highAlerts} medium={mediumAlerts} low={lowAlerts} />
+            <div className="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-12">
+                <div className="rounded-[14px] border border-slate-100 bg-white p-4 xl:col-span-7">
+                    <AttackTypeChart data={attackTypeData} />
+                </div>
+
+                <div className="rounded-[14px] border border-slate-100 bg-white p-4 xl:col-span-5">
+                    <AlertSeverityDonut
+                        high={highAlerts}
+                        medium={mediumAlerts}
+                        low={lowAlerts}
+                    />
+                </div>
             </div>
 
-            {/* ROW 3: Top Agents and Top MITRE (Both Normal, sitting side-by-side) */}
-            <div className="dashboard-grid">
-                <TopAgentsChart data={topAgentsData} />
-                <TopMitreTactics data={topMitreData} />
+            <div className="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-12">
+                <div className="xl:col-span-8">
+                    <RecentAlertsTable alerts={alerts} />
+                </div>
+
+                <div className="xl:col-span-4">
+                    <ManagerHealthMini manager={manager} onRefresh={fetchDashboardData} />
+                </div>
             </div>
 
-            {/* ROW 4: Details */}
-            <div className="dashboard-grid">
-                <RecentAlertsTable alerts={alerts} />
-                <ManagerHealthMini manager={manager} onRefresh={fetchDashboardData} />
+            <div className="mb-[18px] grid grid-cols-1 gap-[18px] xl:grid-cols-12">
+                <div className="rounded-[14px] border border-slate-100 bg-white p-4 xl:col-span-7">
+                    <AlertEvolutionChart data={alertEvolutionData} />
+                </div>
+
+                <div className="rounded-[14px] border border-slate-100 bg-white p-4 xl:col-span-5">
+                    <TopMitreTactics data={topMitreData} />
+                </div>
             </div>
         </>
     );

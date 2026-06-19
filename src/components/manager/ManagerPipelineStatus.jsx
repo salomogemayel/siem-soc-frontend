@@ -14,14 +14,23 @@ function StatusIcon({ status }) {
 
 function statusClass(status) {
     if (status === "online" || status === "connected" || status === "receiving") {
-        return "success";
+        return {
+            icon: "bg-emerald-50 text-emerald-600",
+            text: "text-emerald-700",
+        };
     }
 
     if (status === "idle") {
-        return "warning";
+        return {
+            icon: "bg-amber-50 text-amber-600",
+            text: "text-amber-700",
+        };
     }
 
-    return "danger";
+    return {
+        icon: "bg-red-50 text-red-600",
+        text: "text-red-700",
+    };
 }
 
 export default function ManagerPipelineStatus({ health }) {
@@ -54,26 +63,42 @@ export default function ManagerPipelineStatus({ health }) {
     ];
 
     return (
-        <div className="card manager-pipeline-card">
-            <h2>Data Pipeline Status</h2>
-            <p>Agent data flow from Wazuh into your custom SOC dashboard.</p>
+        <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
+            <h2 className="m-0 text-lg font-semibold text-slate-900">
+                Data Pipeline Status
+            </h2>
+            <p className="m-0 mt-1 text-sm text-slate-500">
+                Agent data flow from Wazuh into your custom SOC dashboard.
+            </p>
 
-            <div className="pipeline-steps">
-                {steps.map((step, index) => (
-                    <div className="pipeline-step" key={step.label}>
-                        <div className={`pipeline-icon ${statusClass(step.status)}`}>
-                            <StatusIcon status={step.status} />
+            <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-5">
+                {steps.map((step, index) => {
+                    const style = statusClass(step.status);
+
+                    return (
+                        <div key={step.label} className="relative">
+                            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                                <div className={`mb-3 grid h-10 w-10 place-items-center rounded-xl ${style.icon}`}>
+                                    <StatusIcon status={step.status} />
+                                </div>
+
+                                <strong className="block text-sm font-semibold text-slate-900">
+                                    {step.label}
+                                </strong>
+                                <span className="mt-1 block text-xs text-slate-500">
+                                    {step.description}
+                                </span>
+                                <small className={`mt-2 block text-xs font-bold uppercase ${style.text}`}>
+                                    {step.status}
+                                </small>
+                            </div>
+
+                            {index !== steps.length - 1 && (
+                                <div className="absolute left-full top-1/2 hidden h-px w-4 bg-slate-200 xl:block" />
+                            )}
                         </div>
-
-                        <div>
-                            <strong>{step.label}</strong>
-                            <span>{step.description}</span>
-                            <small className={statusClass(step.status)}>{step.status}</small>
-                        </div>
-
-                        {index !== steps.length - 1 && <div className="pipeline-line" />}
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );

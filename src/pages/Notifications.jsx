@@ -82,67 +82,100 @@ export default function Notifications() {
     if (error) return <ErrorState message={error} />;
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="Notifications"
                 description="Review high and critical security alerts that require attention."
             />
 
-            <div className="notification-page-toolbar">
-                <div>
-                    <strong>{unread}</strong>
-                    <span> unread notifications</span>
+            <div className="flex flex-col gap-3 rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                <div className="text-sm text-slate-600">
+                    <strong className="text-lg text-slate-900">
+                        {unread}
+                    </strong>{" "}
+                    unread notifications
                 </div>
 
-                <button onClick={handleMarkAll}>Mark all as read</button>
+                <button
+                    onClick={handleMarkAll}
+                    className="h-10 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
+                >
+                    Mark all as read
+                </button>
             </div>
 
-            <div className="card notification-page-list">
+            <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
                 {notifications.length === 0 ? (
-                    <p className="notification-empty">No notifications found.</p>
+                    <div className="py-10 text-center text-sm text-slate-500">
+                        No notifications found.
+                    </div>
                 ) : (
-                    notifications.map((item) => (
-                        <div
-                            key={item.id}
-                            className={`notification-page-item ${
-                                item.is_read ? "" : "unread"
-                            }`}
-                        >
-                            <div className={`notification-page-icon ${item.severity}`}>
-                                <AlertTriangle size={20} />
-                            </div>
+                    <div className="space-y-3">
+                        {notifications.map((item) => {
+                            const severityClass =
+                                item.severity === "high"
+                                    ? "bg-red-50 text-red-600"
+                                    : item.severity === "medium"
+                                        ? "bg-amber-50 text-amber-600"
+                                        : "bg-blue-50 text-blue-600";
 
-                            <div className="notification-page-content">
-                                <div className="notification-page-title">
-                                    <h3>{item.title}</h3>
+                            return (
+                                <div
+                                    key={item.id}
+                                    className={`flex gap-4 rounded-xl border p-4 transition ${
+                                        item.is_read
+                                            ? "border-slate-100 bg-white"
+                                            : "border-blue-200 bg-blue-50/30"
+                                    }`}
+                                >
+                                    <div
+                                        className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${severityClass}`}
+                                    >
+                                        <AlertTriangle size={20} />
+                                    </div>
 
-                                    {!item.is_read && (
-                                        <button onClick={() => handleRead(item.id)}>
-                                            Mark as read
-                                        </button>
-                                    )}
+                                    <div className="min-w-0 flex-1">
+                                        <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                            <h3 className="m-0 text-sm font-semibold text-slate-900">
+                                                {item.title}
+                                            </h3>
+
+                                            {!item.is_read && (
+                                                <button
+                                                    onClick={() => handleRead(item.id)}
+                                                    className="text-xs font-semibold text-blue-600 hover:text-blue-700"
+                                                >
+                                                    Mark as read
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <p className="m-0 text-sm text-slate-600">
+                                            {item.message}
+                                        </p>
+
+                                        <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
+                                            <span>Rule {item.rule_id}</span>
+                                            <span>Level {item.rule_level}</span>
+                                            <span>{item.agent_name}</span>
+                                            <span>{item.alert_timestamp}</span>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <p>{item.message}</p>
-
-                                <div className="notification-meta">
-                                    <span>Rule {item.rule_id}</span>
-                                    <span>Level {item.rule_level}</span>
-                                    <span>{item.agent_name}</span>
-                                    <span>{item.alert_timestamp}</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))
+                            );
+                        })}
+                    </div>
                 )}
 
-                <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    pageNumbers={pageNumbers}
-                    setPage={setPage}
-                />
+                <div className="mt-5">
+                    <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        pageNumbers={pageNumbers}
+                        setPage={setPage}
+                    />
+                </div>
             </div>
-        </>
+        </section>
     );
 }

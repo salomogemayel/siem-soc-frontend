@@ -71,69 +71,97 @@ export default function NotificationBell() {
     };
 
     return (
-        <div className="notification-wrapper">
+        <div className="relative">
             <button
-                className="notification-button"
                 onClick={() => setOpen((prev) => !prev)}
+                className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
             >
                 <Bell size={20} />
 
                 {count > 0 && (
-                    <span className="notification-badge">
-            {count > 99 ? "99+" : count}
-          </span>
+                    <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
+                    {count > 99 ? "99+" : count}
+                </span>
                 )}
             </button>
 
             {open && (
-                <div className="notification-dropdown">
-                    <div className="notification-header">
+                <div className="absolute right-0 top-12 z-50 w-[380px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+                    <div className="flex items-start justify-between border-b border-slate-100 p-4">
                         <div>
-                            <h3>Notifications</h3>
-                            <p>{count} unread critical alerts</p>
+                            <h3 className="m-0 text-sm font-semibold text-slate-900">
+                                Notifications
+                            </h3>
+
+                            <p className="m-0 mt-1 text-xs text-slate-500">
+                                {count} unread critical alerts
+                            </p>
                         </div>
 
-                        <button onClick={handleMarkAllAsRead}>Mark all read</button>
+                        <button
+                            onClick={handleMarkAllAsRead}
+                            className="text-xs font-semibold text-blue-600 hover:text-blue-700"
+                        >
+                            Mark all read
+                        </button>
                     </div>
 
-                    <div className="notification-list">
+                    <div className="max-h-[400px] overflow-y-auto">
                         {notifications.length === 0 ? (
-                            <div className="notification-empty">
+                            <div className="p-6 text-center text-sm text-slate-500">
                                 No notifications yet.
                             </div>
                         ) : (
-                            notifications.map((item) => (
-                                <button
-                                    key={item.id}
-                                    className={`notification-item ${
-                                        item.is_read ? "" : "unread"
-                                    }`}
-                                    onClick={() => openRelatedAlert(item)}
-                                >
-                                    <div className={`notification-icon ${item.severity}`}>
-                                        <AlertTriangle size={16} />
-                                    </div>
+                            notifications.map((item) => {
+                                const severityClass =
+                                    item.severity === "high"
+                                        ? "bg-red-50 text-red-600"
+                                        : item.severity === "medium"
+                                            ? "bg-amber-50 text-amber-600"
+                                            : "bg-blue-50 text-blue-600";
 
-                                    <div className="notification-content">
-                                        <strong>{item.title}</strong>
-                                        <p>{item.message}</p>
+                                return (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => openRelatedAlert(item)}
+                                        className={`flex w-full gap-3 border-b border-slate-100 p-4 text-left transition hover:bg-slate-50 ${
+                                            item.is_read ? "" : "bg-blue-50/30"
+                                        }`}
+                                    >
+                                        <div
+                                            className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${severityClass}`}
+                                        >
+                                            <AlertTriangle size={16} />
+                                        </div>
 
-                                        <span>
-                      Rule {item.rule_id} • Level {item.rule_level} •{" "}
-                                            {item.agent_name}
-                    </span>
-                                    </div>
-                                </button>
-                            ))
+                                        <div className="min-w-0 flex-1">
+                                            <strong className="block truncate text-sm text-slate-900">
+                                                {item.title}
+                                            </strong>
+
+                                            <p className="mt-1 line-clamp-2 text-xs text-slate-500">
+                                                {item.message}
+                                            </p>
+
+                                            <span className="mt-2 block text-[11px] text-slate-400">
+                                            Rule {item.rule_id} • Level{" "}
+                                                {item.rule_level} •{" "}
+                                                {item.agent_name}
+                                        </span>
+                                        </div>
+                                    </button>
+                                );
+                            })
                         )}
                     </div>
 
-                    <div className="notification-footer">
+                    <div className="border-t border-slate-100 p-3">
                         <button
                             onClick={() => {
                                 setOpen(false);
                                 navigate("/notifications");
                             }}
+                            className="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                         >
                             View all notifications
                         </button>

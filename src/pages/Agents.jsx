@@ -109,7 +109,7 @@ export default function Agents() {
     if (error) return <ErrorState message={error} />;
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="Agents"
                 description="Monitor endpoint health, status, and security activity."
@@ -147,6 +147,6 @@ export default function Agents() {
                 agent={selectedAgent}
                 onClose={() => setSelectedAgent(null)}
             />
-        </>
+        </section>
     );
 }

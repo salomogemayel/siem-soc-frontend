@@ -88,7 +88,7 @@ export default function Rules() {
     if (error) return <ErrorState message={error} />;
 
     return (
-        <>
+        <section className="space-y-[18px]">
             <PageHeader
                 title="Wazuh Security Rules"
                 description=""
@@ -108,7 +108,7 @@ export default function Rules() {
                 onReset={resetFilters}
             />
 
-            <div className="card">
+            <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
                 <RulesTable rules={rules} />
 
                 <Pagination
@@ -118,6 +118,6 @@ export default function Rules() {
                     setPage={setPage}
                 />
             </div>
-        </>
+        </section>
     );
 }

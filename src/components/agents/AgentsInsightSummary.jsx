@@ -1,48 +1,62 @@
-import { Activity, AlertTriangle, Clock, ShieldCheck } from "lucide-react";
+import { Activity, AlertTriangle, Clock } from "lucide-react";
 
 export default function AgentsInsightSummary({
-                                                 active,
                                                  atRisk,
                                                  alerts24h,
                                                  latestData,
                                              }) {
+    const cards = [
+        {
+            title: "At-Risk Agents",
+            value: atRisk,
+            description: "Disconnected or suspicious activity",
+            icon: AlertTriangle,
+            iconClass: "bg-red-50 text-red-600",
+        },
+        {
+            title: "Alerts 24h",
+            value: alerts24h,
+            description: "Detected from all endpoints",
+            icon: Activity,
+            iconClass: "bg-amber-50 text-amber-600",
+        },
+        {
+            title: "Latest Data",
+            value: latestData || "-",
+            description: "Most recent alert or log",
+            icon: Clock,
+            iconClass: "bg-blue-50 text-blue-600",
+        },
+    ];
+
     return (
-        <div className="agents-insight-grid">
-            <div className="agents-insight-card success">
-                <ShieldCheck size={22} />
-                <div>
-                    <span>Active Agents</span>
-                    <strong>{active}</strong>
-                    <p>Currently sending data</p>
-                </div>
-            </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            {cards.map((item) => {
+                const Icon = item.icon;
 
-            <div className="agents-insight-card danger">
-                <AlertTriangle size={22} />
-                <div>
-                    <span>At-Risk Agents</span>
-                    <strong>{atRisk}</strong>
-                    <p>Disconnected or suspicious activity</p>
-                </div>
-            </div>
+                return (
+                    <div
+                        key={item.title}
+                        className="flex items-start gap-3.5 rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm"
+                    >
+                        <div className={`grid h-[42px] w-[42px] shrink-0 place-items-center rounded-xl ${item.iconClass}`}>
+                            <Icon size={22} />
+                        </div>
 
-            <div className="agents-insight-card warning">
-                <Activity size={22} />
-                <div>
-                    <span>Alerts 24h</span>
-                    <strong>{alerts24h}</strong>
-                    <p>Detected from all endpoints</p>
-                </div>
-            </div>
-
-            <div className="agents-insight-card">
-                <Clock size={22} />
-                <div>
-                    <span>Latest Data</span>
-                    <strong className="agent-insight-date">{latestData || "-"}</strong>
-                    <p>Most recent alert or log</p>
-                </div>
-            </div>
+                        <div className="min-w-0">
+                            <span className="text-sm font-medium text-slate-500">
+                                {item.title}
+                            </span>
+                            <strong className="mt-1 block truncate text-lg font-bold text-slate-900">
+                                {item.value}
+                            </strong>
+                            <p className="m-0 mt-1 text-sm text-slate-500">
+                                {item.description}
+                            </p>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }

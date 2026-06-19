@@ -8,8 +8,10 @@ export default function AlertSeverityDonut({ high, medium, low }) {
     ].filter((item) => item.value > 0);
 
     return (
-        <div className="chart-card">
-            <h3>Severity Distribution</h3>
+        <div className="h-full w-full">
+            <h3 className="mb-4 text-base font-semibold text-slate-900">
+                Severity Distribution
+            </h3>
 
             <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
