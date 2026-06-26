@@ -8,6 +8,8 @@ export const getAlerts = ({
                               page = 1,
                               size = 20,
                               level = "",
+                              levelGte = "",
+                              severity = "",
                               search = "",
                               agent = "",
                               ruleId = "",
@@ -16,22 +18,34 @@ export const getAlerts = ({
                               timeRange = "24h",
                               dateFrom = "",
                               dateTo = "",
+                              sortBy = "timestamp",
+                              sortOrder = "desc",
+                              includeSoc = 0,
+                              alertView = "incident",
                           } = {}) =>
     api.get("/wazuh/alerts", {
         params: {
             page,
             size,
             level,
+            level_gte: levelGte,
+            severity,
             search,
-            agent,
+            agent_id: agent,
             rule_id: ruleId,
             mitre,
             group,
             time_range: timeRange,
             date_from: dateFrom,
             date_to: dateTo,
+            sort_by: sortBy,
+            sort_order: sortOrder,
+            include_soc: includeSoc,
+            alert_view: alertView,
         },
     });
+
+export const getAlertDetail = (id) => api.get(`/wazuh/alerts/${id}`);
 
 export const getAgents = ({
                               page = 1,

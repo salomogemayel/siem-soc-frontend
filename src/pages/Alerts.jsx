@@ -31,6 +31,7 @@ export default function Alerts() {
                 page: 1,
                 size: 100,
                 timeRange: "24h",
+                alertView: "incident",
             });
 
             if (response.data.success) {

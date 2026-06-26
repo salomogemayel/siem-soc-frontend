@@ -5,7 +5,6 @@ import { getAlerts, getAgents } from "../api/wazuhApi";
 import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
-
 import AlertsTabs from "../components/alerts/AlertsTabs";
 import AlertsSummary from "../components/alerts/AlertsSummary";
 import AlertsFilterBar from "../components/alerts/AlertsFilterBar";
@@ -27,7 +26,6 @@ export default function AlertsList() {
 
     const [alerts, setAlerts] = useState([]);
     const [expanded, setExpanded] = useState(null);
-
     const [summary, setSummary] = useState(DEFAULT_SUMMARY);
 
     const [page, setPage] = useState(1);
@@ -46,6 +44,7 @@ export default function AlertsList() {
 
     const [ruleId, setRuleId] = useState("");
     const [group, setGroup] = useState("");
+    const [alertView, setAlertView] = useState("incident");
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -57,22 +56,6 @@ export default function AlertsList() {
         maxAccessiblePages
     );
 
-    const buildLevelParam = (
-        selectedSeverity = severity,
-        selectedLevelValue = levelValue
-    ) => {
-        if (selectedSeverity === "low") return "low";
-        if (selectedSeverity === "medium") return "medium";
-        if (selectedSeverity === "high") return "high";
-        if (selectedSeverity === "critical") return "gte:12";
-
-        if (selectedSeverity === "custom" && selectedLevelValue !== "") {
-            return `exact:${selectedLevelValue}`;
-        }
-
-        return "";
-    };
-
     const applyUrlParamsToState = () => {
         const urlSearch = searchParams.get("search") || "";
         const urlSeverity = searchParams.get("severity") || "";
@@ -81,11 +64,13 @@ export default function AlertsList() {
             searchParams.get("rule_id") || searchParams.get("ruleId") || "";
         const urlAgent = searchParams.get("agent") || "";
         const urlGroup = searchParams.get("group") || "";
+        const urlAlertView = searchParams.get("alert_view") || "incident";
 
         setSearch(urlSearch);
         setRuleId(urlRuleId);
         setAgent(urlAgent);
         setGroup(urlGroup);
+        setAlertView(urlAlertView);
 
         if (urlSeverity) {
             setSeverity(urlSeverity);
@@ -149,14 +134,28 @@ export default function AlertsList() {
         const selectedTimeRange = overrides.timeRange ?? timeRange;
         const selectedDateFrom = overrides.dateFrom ?? dateFrom;
         const selectedDateTo = overrides.dateTo ?? dateTo;
+        const selectedAlertView = overrides.alertView ?? alertView;
 
-        const selectedLevel =
-            overrides.level ?? buildLevelParam(selectedSeverity, selectedLevelValue);
+        let selectedLevel = "";
+        let selectedLevelGte = "";
+        let selectedSeverityParam = selectedSeverity;
+
+        if (selectedSeverity === "custom" && selectedLevelValue !== "") {
+            selectedLevel = selectedLevelValue;
+            selectedSeverityParam = "";
+        }
+
+        if (selectedSeverity === "critical") {
+            selectedLevelGte = 12;
+            selectedSeverityParam = "";
+        }
 
         const params = {
             page: selectedPage,
             size: PAGE_SIZE,
             level: selectedLevel,
+            levelGte: selectedLevelGte,
+            severity: selectedSeverityParam,
             search: selectedSearch,
             agent: overrides.agent ?? agent,
             ruleId: overrides.ruleId ?? ruleId,
@@ -170,6 +169,8 @@ export default function AlertsList() {
                 selectedTimeRange === "custom" && selectedDateTo
                     ? new Date(selectedDateTo).toISOString()
                     : "",
+            includeSoc: 0,
+            alertView: selectedAlertView,
         };
 
         try {
@@ -203,6 +204,7 @@ export default function AlertsList() {
             searchParams.get("rule_id") || searchParams.get("ruleId") || "";
         const urlAgent = searchParams.get("agent") || "";
         const urlGroup = searchParams.get("group") || "";
+        const urlAlertView = searchParams.get("alert_view") || "incident";
 
         let selectedSeverity = urlSeverity;
         let selectedLevelValue = "";
@@ -232,6 +234,7 @@ export default function AlertsList() {
             ruleId: urlRuleId,
             agent: urlAgent,
             group: urlGroup,
+            alertView: urlAlertView,
         });
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -244,6 +247,24 @@ export default function AlertsList() {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page]);
+
+    const pageNumbers = useMemo(() => {
+        const pages = [];
+        const maxVisible = 5;
+
+        let start = Math.max(1, page - 2);
+        let end = Math.min(totalPages, start + maxVisible - 1);
+
+        if (end - start < maxVisible - 1) {
+            start = Math.max(1, end - maxVisible + 1);
+        }
+
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+
+        return pages;
+    }, [page, totalPages]);
 
     const applySearch = () => {
         if (timeRange === "custom" && (!dateFrom || !dateTo)) {
@@ -264,6 +285,7 @@ export default function AlertsList() {
             timeRange,
             dateFrom,
             dateTo,
+            alertView,
         });
     };
 
@@ -277,38 +299,45 @@ export default function AlertsList() {
         setAgent("");
         setRuleId("");
         setGroup("");
+        setAlertView("incident");
         setPage(1);
 
         void fetchAlerts({
             page: 1,
-            level: "",
             search: "",
+            severity: "",
+            levelValue: "",
             agent: "",
             ruleId: "",
             group: "",
             timeRange: "24h",
             dateFrom: "",
             dateTo: "",
+            alertView: "incident",
         });
     };
 
-    const pageNumbers = useMemo(() => {
-        const pages = [];
-        const maxVisible = 5;
+    const changeAlertView = (event) => {
+        const value = event.target.value;
 
-        let start = Math.max(1, page - 2);
-        let end = Math.min(totalPages, start + maxVisible - 1);
+        setAlertView(value);
+        setExpanded(null);
+        setPage(1);
 
-        if (end - start < maxVisible - 1) {
-            start = Math.max(1, end - maxVisible + 1);
-        }
-
-        for (let i = start; i <= end; i++) {
-            pages.push(i);
-        }
-
-        return pages;
-    }, [page, totalPages]);
+        void fetchAlerts({
+            page: 1,
+            alertView: value,
+            search,
+            severity,
+            levelValue,
+            agent,
+            ruleId,
+            group,
+            timeRange,
+            dateFrom,
+            dateTo,
+        });
+    };
 
     if (loading) return <LoadingState message="Loading alerts..." />;
     if (error) return <ErrorState message={error} />;
@@ -349,11 +378,31 @@ export default function AlertsList() {
                     onReset={resetFilters}
                 />
 
+                <div className="mb-4 flex items-center gap-3">
+                    <label className="text-sm font-semibold text-slate-700">
+                        Alert View
+                    </label>
+
+                    <select
+                        value={alertView}
+                        onChange={changeAlertView}
+                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                    >
+                        <option value="incident">Incident View</option>
+                        <option value="evidence">Evidence View</option>
+                        <option value="raw">Raw View</option>
+                    </select>
+                </div>
+
                 <AlertsTable
                     alerts={alerts}
                     expanded={expanded}
                     setExpanded={setExpanded}
                 />
+
+                <p className="mt-4 text-sm text-slate-500">
+                    Showing {alerts.length} alerts from {total} matching results.
+                </p>
 
                 <Pagination
                     page={page}

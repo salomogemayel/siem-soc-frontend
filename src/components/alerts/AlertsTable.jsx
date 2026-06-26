@@ -2,9 +2,12 @@ import { Fragment } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import AlertExpandedRow from "./AlertsExpandedRow.jsx";
 
-export default function AlertsTable({ alerts, expanded, setExpanded }) {
+export default function AlertsTable({ alerts = [], expanded, setExpanded }) {
+    const visibleAlerts = alerts;
+
     const formatTime = (timestamp) => {
         if (!timestamp) return "-";
+
         return new Date(timestamp).toLocaleString();
     };
 
@@ -13,7 +16,28 @@ export default function AlertsTable({ alerts, expanded, setExpanded }) {
 
         if (value >= 8) return "bg-red-50 text-red-700";
         if (value >= 5) return "bg-amber-50 text-amber-700";
+
         return "bg-emerald-50 text-emerald-700";
+    };
+
+    const getRoleBadge = (alert) => {
+        if (alert.correlation_role === "parent") {
+            return (
+                <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700">
+                    {alert.child_count || 0} evidence
+                </span>
+            );
+        }
+
+        if (alert.correlation_role === "standalone") {
+            return (
+                <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
+                    standalone
+                </span>
+            );
+        }
+
+        return null;
     };
 
     return (
@@ -34,15 +58,15 @@ export default function AlertsTable({ alerts, expanded, setExpanded }) {
                 </thead>
 
                 <tbody>
-                {alerts.length === 0 ? (
+                {visibleAlerts.length === 0 ? (
                     <tr>
                         <td colSpan="9" className="p-6 text-center text-sm text-slate-500">
                             No alerts found.
                         </td>
                     </tr>
                 ) : (
-                    alerts.map((alert, index) => {
-                        const rowKey = `${alert.rule_id}-${alert.timestamp}-${index}`;
+                    visibleAlerts.map((alert, index) => {
+                        const rowKey = `${alert.id || alert.rule_id}-${alert.timestamp}-${index}`;
                         const isOpen = expanded === rowKey;
 
                         return (
@@ -65,30 +89,42 @@ export default function AlertsTable({ alerts, expanded, setExpanded }) {
                                     <td className="border-b border-slate-100 p-3.5">
                                         {formatTime(alert.timestamp)}
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                        {alert.agent_id}
+                                        {alert.agent_id || "-"}
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                        {alert.agent_name}
+                                        {alert.agent_name || "-"}
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                        {alert.technique?.length ? alert.technique.join(", ") : "-"}
+                                        {alert.mitre?.technique?.length
+                                            ? alert.mitre.technique.join(", ")
+                                            : "-"}
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                        {alert.tactic?.length ? alert.tactic.join(", ") : "-"}
+                                        {alert.mitre?.tactic?.length
+                                            ? alert.mitre.tactic.join(", ")
+                                            : "-"}
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                        {alert.description}
+                                        {alert.description || "-"}
+                                        {getRoleBadge(alert)}
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                            <span className={`inline-flex min-w-8 justify-center rounded-full px-2.5 py-1 text-xs font-bold ${getLevelClass(alert.level)}`}>
-                                                {alert.level}
-                                            </span>
+                                        <span className={`inline-flex min-w-8 justify-center rounded-full px-2.5 py-1 text-xs font-bold ${getLevelClass(alert.level)}`}>
+                                            {alert.level || 0}
+                                        </span>
                                     </td>
+
                                     <td className="border-b border-slate-100 p-3.5">
-                                            <span className="font-semibold text-blue-600">
-                                                {alert.rule_id}
-                                            </span>
+                                        <span className="font-semibold text-blue-600">
+                                            {alert.rule_id || "-"}
+                                        </span>
                                     </td>
                                 </tr>
 

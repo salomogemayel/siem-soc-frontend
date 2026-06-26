@@ -62,7 +62,7 @@ export default function Manager() {
                 description="Monitor Wazuh infrastructure, data pipeline, index health, and agent connectivity."
             />
 
-            <ManagerHealthOverview health={health} latest={latest} />
+            {/*<ManagerHealthOverview health={health} latest={latest} />*/}
 
             <ManagerPipelineStatus health={health} />
 

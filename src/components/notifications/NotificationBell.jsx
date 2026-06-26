@@ -64,7 +64,13 @@ export default function NotificationBell() {
     const handleMarkAllAsRead = async () => {
         try {
             await markAllNotificationsAsRead();
-            await fetchNotificationData();
+            setCount(0);
+            setNotifications((items) =>
+                items.map((item) => ({
+                    ...item,
+                    is_read: true,
+                }))
+            );
         } catch (err) {
             console.error("Failed to mark all notifications as read");
         }

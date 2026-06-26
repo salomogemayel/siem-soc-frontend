@@ -1,11 +1,15 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Info } from "lucide-react";
+import Tooltips from "../../components/Tooltip.jsx";
 
 export default function ManagerHealthMini({ manager, onRefresh }) {
     return (
         <div className="flex h-full flex-col gap-3 rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
-            <h2 className="m-0 text-lg font-semibold text-slate-900">
-                Manager Health
-            </h2>
+            <div className="flex items-center gap-2">
+                <h2 className="m-0 text-lg font-semibold text-slate-900">Wazuh Manager</h2>
+                <Tooltips content="Status koneksi dan informasi versi Wazuh Manager" icon={Info}>
+                    <Info size={16} className="text-slate-400 cursor-help" />
+                </Tooltips>
+            </div>
 
             <div className="flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-3">
                 <div className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[10px] bg-emerald-500 text-white">
@@ -14,17 +18,17 @@ export default function ManagerHealthMini({ manager, onRefresh }) {
 
                 <div>
                     <strong className="text-sm text-slate-900">
-                        {manager ? "Connected" : "Unknown"}
+                        {manager ? "Terhubung" : "Tidak Diketahui"}
                     </strong>
                     <p className="m-0 mt-1 text-sm text-slate-500">
-                        Laravel backend can communicate with Wazuh Manager API.
+                        Sistem terhubung dengan Wazuh Manager.
                     </p>
                 </div>
             </div>
 
             <div>
                 <div className="flex justify-between border-b border-slate-100 py-2 text-sm">
-                    <span className="text-slate-500">Version</span>
+                    <span className="text-slate-500">Versi</span>
                     <strong className="text-slate-900">
                         {manager?.info?.version || "-"}
                     </strong>

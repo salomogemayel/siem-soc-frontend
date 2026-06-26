@@ -81,6 +81,20 @@ export default function Notifications() {
     if (loading) return <LoadingState message="Loading notifications..." />;
     if (error) return <ErrorState message={error} />;
 
+    const formatDate = (value) => {
+        if (!value) return "-";
+
+        return new Intl.DateTimeFormat("id-ID", {
+            timeZone: "Asia/Jakarta",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+        }).format(new Date(value));
+    };
+
     return (
         <section className="space-y-[18px]">
             <PageHeader
@@ -158,7 +172,7 @@ export default function Notifications() {
                                             <span>Rule {item.rule_id}</span>
                                             <span>Level {item.rule_level}</span>
                                             <span>{item.agent_name}</span>
-                                            <span>{item.alert_timestamp}</span>
+                                            <span>{formatDate(item.alert_timestamp)}</span>
                                         </div>
                                     </div>
                                 </div>

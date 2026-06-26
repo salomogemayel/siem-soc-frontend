@@ -13,7 +13,7 @@ import AlertSeverityDonut from "../components/dashboard/AlertSeverityDonut";
 import AlertEvolutionChart from "../components/dashboard/AlertEvolutionChart";
 import TopMitreTactics from "../components/dashboard/TopMitreTactics";
 import AttackTypeChart from "../components/dashboard/AttackTypeChart.jsx";
-import {getAttackType} from "../utils/attackTypeUtils.js";
+import { getAttackType } from "../utils/attackTypeUtils.js";
 
 export default function Dashboard() {
     const [alerts, setAlerts] = useState([]);
@@ -28,13 +28,17 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // 1. Tambahkan state untuk timeframe
+    const [timeframe, setTimeframe] = useState("24h");
+
     const fetchDashboardData = async () => {
         setLoading(true);
         setError("");
 
         try {
             const [alertsRes, agentsRes, rulesRes, managerRes] = await Promise.all([
-                getAlerts({ page: 1, size: 10 }),
+                // Ubah size menjadi 10000
+                getAlerts({ page: 1, size: 10000, timeRange: timeframe }),
                 getAgents({ page: 1, size: 10 }),
                 getRules({ page: 1, size: 10 }),
                 getManager(),
@@ -64,25 +68,25 @@ export default function Dashboard() {
         }
     };
 
+    // 3. Masukkan timeframe ke dependency array agar API dipanggil ulang saat waktu berubah
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+    }, [timeframe]);
 
     const activeAgents = useMemo(() => {
         return agents.filter((agent) => agent.status === "active").length;
     }, [agents]);
 
-    // PASTE THIS IN ITS PLACE:
     const highAlerts = useMemo(() => {
-        return alerts.filter((alert) => getAlertSeverity(alert.level) === "high").length;
+        return alerts.filter((alert) => alert.severity === "high").length;
     }, [alerts]);
 
     const mediumAlerts = useMemo(() => {
-        return alerts.filter((alert) => getAlertSeverity(alert.level) === "medium").length;
+        return alerts.filter((alert) => alert.severity === "medium").length;
     }, [alerts]);
 
     const lowAlerts = useMemo(() => {
-        return alerts.filter((alert) => getAlertSeverity(alert.level) === "low").length;
+        return alerts.filter((alert) => alert.severity === "low").length;
     }, [alerts]);
 
     const alertEvolutionData = useMemo(() => {
@@ -125,15 +129,15 @@ export default function Dashboard() {
         const grouped = {};
 
         alerts.forEach((alert) => {
-            // Some alerts might not have MITRE data, so we check first
-            if (alert.tactic && alert.tactic.length > 0) {
-                alert.tactic.forEach((tacticName) => {
+            const tactics = alert.mitre?.tactic || [];
+
+            if (tactics.length > 0) {
+                tactics.forEach((tacticName) => {
                     grouped[tacticName] = (grouped[tacticName] || 0) + 1;
                 });
             }
         });
 
-        // Convert to array, sort by highest count, and take the top 5
         return Object.entries(grouped)
             .map(([name, count]) => ({ name, count }))
             .sort((a, b) => b.count - a.count)
@@ -145,7 +149,26 @@ export default function Dashboard() {
 
     return (
         <>
-            <PageHeader title="Dashboard Overview" description="" />
+            {/* 4. Tambahkan elemen pembungkus untuk menempatkan Select Dropdown di sebelah Header */}
+            <div className="flex justify-between items-center mb-6">
+                <PageHeader title="Dashboard Overview" description="" />
+
+                <div className="flex items-center gap-2">
+                    <label htmlFor="timeframe" className="text-sm font-medium text-slate-600">
+                        Timeframe:
+                    </label>
+                    <select
+                        id="timeframe"
+                        value={timeframe}
+                        onChange={(e) => setTimeframe(e.target.value)}
+                        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    >
+                        <option value="1h">Last 1 Hour</option>
+                        <option value="today">Today</option>
+                        <option value="24h">Last 24 Hours</option>
+                    </select>
+                </div>
+            </div>
 
             <DashboardStats
                 totalAlerts={totalAlerts}
