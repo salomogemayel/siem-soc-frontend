@@ -36,11 +36,10 @@ export default function RulesToolbar({
                 className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 lg:w-[150px]"
             >
                 <option value="">All Levels</option>
-                <option value="3">Level 3+</option>
-                <option value="5">Level 5+</option>
-                <option value="7">Level 7+</option>
-                <option value="10">Level 10+</option>
-                <option value="12">Level 12+</option>
+                <option value="critical">Critical (12+)</option>
+                <option value="high">High (10+)</option>
+                <option value="medium">Medium (5+)</option>
+                <option value="low">Low (0+)</option>
             </select>
 
             <select

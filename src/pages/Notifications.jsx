@@ -51,8 +51,35 @@ export default function Notifications() {
     }, [page]);
 
     const handleRead = async (id) => {
-        await markNotificationAsRead(id);
-        await fetchNotifications();
+        try {
+            // 1. Optimistic UI update
+            setNotifications((prev) =>
+                prev.map((item) =>
+                    item.id === id
+                        ? { ...item, is_read: true }
+                        : item
+                )
+            );
+
+            setUnread((prev) => Math.max(prev - 1, 0));
+
+            // 2. Backend update
+            await markNotificationAsRead(id);
+
+            // 3. Optional sync (silent refresh, no loading flash)
+            const response = await getNotifications({
+                page,
+                size: PAGE_SIZE,
+            });
+
+            if (response.data.success) {
+                setNotifications(response.data.data || []);
+                setUnread(response.data.unread || 0);
+                setTotalPages(response.data.total_pages || 1);
+            }
+        } catch (err) {
+            setError("Failed to mark notification as read");
+        }
     };
 
     const handleMarkAll = async () => {
@@ -164,9 +191,10 @@ export default function Notifications() {
                                             )}
                                         </div>
 
-                                        <p className="m-0 text-sm text-slate-600">
-                                            {item.message}
-                                        </p>
+                                        <p
+                                            className="mt-1 line-clamp-2 text-sm text-slate-500"
+                                            dangerouslySetInnerHTML={{ __html: item.message }}
+                                        />
 
                                         <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
                                             <span>Rule {item.rule_id}</span>

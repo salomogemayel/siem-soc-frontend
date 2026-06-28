@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
-import { getAlertSeverity } from "../utils/alertUtils";
 import { getAlerts, getAgents, getManager, getRules } from "../api/wazuhApi";
 
 import DashboardStats from "../components/dashboard/DashboardStats";
@@ -22,14 +21,14 @@ export default function Dashboard() {
     const [agents, setAgents] = useState([]);
     const [totalAgents, setTotalAgents] = useState(0);
 
-    const [totalRules, setTotalRules] = useState(0);
     const [manager, setManager] = useState(null);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    // 1. Tambahkan state untuk timeframe
     const [timeframe, setTimeframe] = useState("24h");
+
+    const [topMitreData, setTopMitreData] = useState([]);
 
     const fetchDashboardData = async () => {
         setLoading(true);
@@ -37,8 +36,7 @@ export default function Dashboard() {
 
         try {
             const [alertsRes, agentsRes, rulesRes, managerRes] = await Promise.all([
-                // Ubah size menjadi 10000
-                getAlerts({ page: 1, size: 10000, timeRange: timeframe }),
+                getAlerts({ page: 1, size: 100, timeRange: timeframe }),
                 getAgents({ page: 1, size: 10 }),
                 getRules({ page: 1, size: 10 }),
                 getManager(),
@@ -46,7 +44,11 @@ export default function Dashboard() {
 
             if (alertsRes.data.success) {
                 setAlerts(alertsRes.data.data || []);
-                setTotalAlerts(alertsRes.data.total || 0);
+
+                // PERBAIKAN: Gunakan raw_total dari backend agar angka tidak mentok di 1000
+                setTotalAlerts(alertsRes.data.raw_total || alertsRes.data.total || 0);
+
+                setTopMitreData(alertsRes.data.statistics?.top_mitre || []);
             }
 
             if (agentsRes.data.success) {
@@ -68,7 +70,6 @@ export default function Dashboard() {
         }
     };
 
-    // 3. Masukkan timeframe ke dependency array agar API dipanggil ulang saat waktu berubah
     useEffect(() => {
         fetchDashboardData();
     }, [timeframe]);
@@ -125,32 +126,12 @@ export default function Dashboard() {
             .sort((a, b) => b.count - a.count);
     }, [alerts]);
 
-    const topMitreData = useMemo(() => {
-        const grouped = {};
-
-        alerts.forEach((alert) => {
-            const tactics = alert.mitre?.tactic || [];
-
-            if (tactics.length > 0) {
-                tactics.forEach((tacticName) => {
-                    grouped[tacticName] = (grouped[tacticName] || 0) + 1;
-                });
-            }
-        });
-
-        return Object.entries(grouped)
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count)
-            .slice(0, 5);
-    }, [alerts]);
-
     if (loading) return <LoadingState message="Loading dashboard data..." />;
     if (error) return <ErrorState message={error} />;
 
     return (
         <>
-            {/* 4. Tambahkan elemen pembungkus untuk menempatkan Select Dropdown di sebelah Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center justify-between mb-6">
                 <PageHeader title="Dashboard Overview" description="" />
 
                 <div className="flex items-center gap-2">
@@ -163,9 +144,13 @@ export default function Dashboard() {
                         onChange={(e) => setTimeframe(e.target.value)}
                         className="rounded-md border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     >
+                        {/* PERBAIKAN: Menambahkan opsi timeframe baru */}
+                        <option value="15m">Last 15 Minutes</option>
+                        <option value="30m">Last 30 Minutes</option>
                         <option value="1h">Last 1 Hour</option>
-                        <option value="today">Today</option>
+                        <option value="12h">Last 12 Hours</option>
                         <option value="24h">Last 24 Hours</option>
+                        <option value="today">Today</option>
                     </select>
                 </div>
             </div>

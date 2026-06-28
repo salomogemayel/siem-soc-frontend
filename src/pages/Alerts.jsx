@@ -22,6 +22,9 @@ export default function Alerts() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // 1. Tambahkan state timeframe (default 24h)
+    const [timeframe, setTimeframe] = useState("24h");
+
     const fetchOverview = async () => {
         setLoading(true);
         setError("");
@@ -30,13 +33,21 @@ export default function Alerts() {
             const response = await getAlerts({
                 page: 1,
                 size: 100,
-                timeRange: "24h",
+                timeRange: timeframe, // 2. Gunakan state timeframe di sini
                 alertView: "incident",
             });
 
             if (response.data.success) {
                 setAlerts(response.data.data || []);
-                setSummary(response.data.summary || DEFAULT_SUMMARY);
+
+                // Opsional: Jika Anda ingin Total Alerts sinkron dengan raw_total dari backend (melewati limit 1000)
+                // Anda bisa menimpanya jika backend mengembalikan raw_total
+                const backendSummary = response.data.summary || DEFAULT_SUMMARY;
+                if (response.data.raw_total !== undefined) {
+                    backendSummary.total = response.data.raw_total;
+                }
+
+                setSummary(backendSummary);
             } else {
                 setError(response.data.error || "Failed to load alert overview");
             }
@@ -47,9 +58,10 @@ export default function Alerts() {
         }
     };
 
+    // 3. Tambahkan timeframe sebagai dependency agar data di-refresh saat diubah
     useEffect(() => {
         void fetchOverview();
-    }, []);
+    }, [timeframe]);
 
     const levelChartData = useMemo(() => {
         const grouped = {};
@@ -166,7 +178,7 @@ export default function Alerts() {
     }, [alerts]);
 
     const recentHighAlerts = useMemo(() => {
-        return alerts.filter((alert) => Number(alert.level) >= 10).slice(0, 5);
+        return alerts.filter((alert) => alert.severity === "high").slice(0, 5);
     }, [alerts]);
 
     if (loading) return <LoadingState message="Loading alert overview..." />;
@@ -174,10 +186,32 @@ export default function Alerts() {
 
     return (
         <section className="space-y-[18px]">
-            <PageHeader
-                title="Security Alerts"
-                description="Monitor detected security alerts from Wazuh Indexer."
-            />
+            {/* 4. Bungkus PageHeader dan Dropdown dengan Flexbox */}
+            <div className="flex items-center justify-between">
+                <PageHeader
+                    title="Security Alerts"
+                    description="Monitor detected security alerts from Wazuh Indexer."
+                />
+
+                <div className="flex items-center gap-2">
+                    <label htmlFor="timeframe" className="text-sm font-medium text-slate-600">
+                        Timeframe:
+                    </label>
+                    <select
+                        id="timeframe"
+                        value={timeframe}
+                        onChange={(e) => setTimeframe(e.target.value)}
+                        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    >
+                        <option value="15m">Last 15 Minutes</option>
+                        <option value="30m">Last 30 Minutes</option>
+                        <option value="1h">Last 1 Hour</option>
+                        <option value="12h">Last 12 Hours</option>
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="today">Today</option>
+                    </select>
+                </div>
+            </div>
 
             <AlertsTabs />
 

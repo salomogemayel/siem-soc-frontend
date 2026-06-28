@@ -123,6 +123,42 @@ export default function AlertsFilterBar({
                 </div>
 
                 <div className={fieldClass}>
+                    <label className={labelClass}>Agent</label>
+                    <select
+                        className={inputClass}
+                        value={agent}
+                        onChange={(e) => setAgent(e.target.value)}
+                    >
+                        <option value="">All Agents</option>
+                        {agentOptions.map((item) => (
+                            <option key={item.id} value={item.id}>
+                                {item.id} - {item.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className={fieldClass}>
+                    <label className={labelClass}>Rule Group</label>
+                    <select
+                        className={inputClass}
+                        value={group}
+                        onChange={(e) => setGroup(e.target.value)}
+                    >
+                        <option value="">All Groups</option>
+                        <option value="authentication">Authentication</option>
+                        <option value="authentication_failed">Authentication Failed</option>
+                        <option value="authentication_success">Authentication Success</option>
+                        <option value="sudo">Sudo / Privilege Activity</option>
+                        <option value="syslog">System</option>
+                        <option value="web">Web</option>
+                        <option value="apache">Apache</option>
+                        <option value="mysql">MySQL</option>
+                        <option value="syscheck">File Integrity</option>
+                    </select>
+                </div>
+
+                <div className={fieldClass}>
                     <label className={labelClass}>Severity</label>
                     <select
                         className={inputClass}
@@ -158,42 +194,6 @@ export default function AlertsFilterBar({
                                 Level {i}
                             </option>
                         ))}
-                    </select>
-                </div>
-
-                <div className={fieldClass}>
-                    <label className={labelClass}>Agent</label>
-                    <select
-                        className={inputClass}
-                        value={agent}
-                        onChange={(e) => setAgent(e.target.value)}
-                    >
-                        <option value="">All Agents</option>
-                        {agentOptions.map((item) => (
-                            <option key={item.id} value={item.id}>
-                                {item.id} - {item.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className={fieldClass}>
-                    <label className={labelClass}>Rule Group</label>
-                    <select
-                        className={inputClass}
-                        value={group}
-                        onChange={(e) => setGroup(e.target.value)}
-                    >
-                        <option value="">All Groups</option>
-                        <option value="authentication">Authentication</option>
-                        <option value="authentication_failed">Authentication Failed</option>
-                        <option value="authentication_success">Authentication Success</option>
-                        <option value="sudo">Sudo / Privilege Activity</option>
-                        <option value="syslog">System</option>
-                        <option value="web">Web</option>
-                        <option value="apache">Apache</option>
-                        <option value="mysql">MySQL</option>
-                        <option value="syscheck">File Integrity</option>
                     </select>
                 </div>
 

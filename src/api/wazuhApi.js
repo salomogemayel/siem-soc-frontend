@@ -1,6 +1,23 @@
 import api from "./axios";
 
-export const getRules = () => api.get("/wazuh/rules");
+export const getRules = ({
+                             page = 1,
+                             size = 20,
+                             search = "",
+                             level = "",
+                             group = "",
+                             ruleType = "custom"
+                         } = {}) =>
+    api.get("/wazuh/rules", {
+        params: {
+            page,
+            size,
+            search,
+            level,
+            group,
+            ruleType
+        }
+    });
 
 export const getManager = () => api.get("/wazuh/manager");
 

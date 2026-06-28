@@ -2,14 +2,11 @@ import { Link } from "react-router-dom";
 import {
     ArrowLeft,
     AlertTriangle,
-    CheckCircle,
     Database,
-    FileText,
     Lock,
     ServerCrash,
     Settings,
     ShieldAlert,
-    Upload,
     UserX,
 } from "lucide-react";
 import { attackPlaybooks } from "../data/attackPlaybooks";
@@ -287,35 +284,35 @@ export default function AttackPlaybookDetail({ slug }) {
                 </div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <h2 className="mb-4 text-xl font-bold text-slate-900">Aksi Cepat</h2>
+            {/*<div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">*/}
+            {/*    <h2 className="mb-4 text-xl font-bold text-slate-900">Aksi Cepat</h2>*/}
 
-                <div className="grid gap-4 md:grid-cols-3">
-                    <Link
-                        to="/logs"
-                        className="inline-flex items-center justify-center gap-3 rounded-2xl border border-blue-500 px-5 py-4 text-sm font-bold text-blue-600 transition hover:bg-blue-50"
-                    >
-                        <FileText size={22} />
-                        Lihat Log Terkait
-                    </Link>
+            {/*    <div className="grid gap-4 md:grid-cols-3">*/}
+            {/*        <Link*/}
+            {/*            to="/logs"*/}
+            {/*            className="inline-flex items-center justify-center gap-3 rounded-2xl border border-blue-500 px-5 py-4 text-sm font-bold text-blue-600 transition hover:bg-blue-50"*/}
+            {/*        >*/}
+            {/*            <FileText size={22} />*/}
+            {/*            Lihat Log Terkait*/}
+            {/*        </Link>*/}
 
-                    <button
-                        type="button"
-                        className="inline-flex items-center justify-center gap-3 rounded-2xl border border-blue-500 px-5 py-4 text-sm font-bold text-blue-600 transition hover:bg-blue-50"
-                    >
-                        <CheckCircle size={22} />
-                        Tandai Selesai
-                    </button>
+            {/*        <button*/}
+            {/*            type="button"*/}
+            {/*            className="inline-flex items-center justify-center gap-3 rounded-2xl border border-blue-500 px-5 py-4 text-sm font-bold text-blue-600 transition hover:bg-blue-50"*/}
+            {/*        >*/}
+            {/*            <CheckCircle size={22} />*/}
+            {/*            Tandai Selesai*/}
+            {/*        </button>*/}
 
-                    <button
-                        type="button"
-                        className="inline-flex items-center justify-center gap-3 rounded-2xl border border-blue-500 px-5 py-4 text-sm font-bold text-blue-600 transition hover:bg-blue-50"
-                    >
-                        <Upload size={22} />
-                        Eskalasi
-                    </button>
-                </div>
-            </div>
+            {/*        <button*/}
+            {/*            type="button"*/}
+            {/*            className="inline-flex items-center justify-center gap-3 rounded-2xl border border-blue-500 px-5 py-4 text-sm font-bold text-blue-600 transition hover:bg-blue-50"*/}
+            {/*        >*/}
+            {/*            <Upload size={22} />*/}
+            {/*            Eskalasi*/}
+            {/*        </button>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     );
 }

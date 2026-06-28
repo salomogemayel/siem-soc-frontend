@@ -145,9 +145,10 @@ export default function NotificationBell() {
                                                 {item.title}
                                             </strong>
 
-                                            <p className="mt-1 line-clamp-2 text-xs text-slate-500">
-                                                {item.message}
-                                            </p>
+                                            <p
+                                                className="mt-1 line-clamp-2 text-xs text-slate-500"
+                                                dangerouslySetInnerHTML={{ __html: item.message }}
+                                            />
 
                                             <span className="mt-2 block text-[11px] text-slate-400">
                                             Rule {item.rule_id} • Level{" "}

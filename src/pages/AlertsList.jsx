@@ -58,10 +58,9 @@ export default function AlertsList() {
 
     const applyUrlParamsToState = () => {
         const urlSearch = searchParams.get("search") || "";
-        const urlSeverity = searchParams.get("severity") || "";
+        const urlSeverity= searchParams.get("severity") || "";
         const urlLevel = searchParams.get("level") || "";
-        const urlRuleId =
-            searchParams.get("rule_id") || searchParams.get("ruleId") || "";
+        const urlRuleId= searchParams.get("rule_id") || searchParams.get("ruleId") || "";
         const urlAgent = searchParams.get("agent") || "";
         const urlGroup = searchParams.get("group") || "";
         const urlAlertView = searchParams.get("alert_view") || "incident";
@@ -78,7 +77,8 @@ export default function AlertsList() {
             return;
         }
 
-        if (urlLevel === "high" || urlLevel === "medium" || urlLevel === "low") {
+        // Tambahkan pengecekan untuk "critical" di sini
+        if (urlLevel === "critical" || urlLevel === "high" || urlLevel === "medium" || urlLevel === "low") {
             setSeverity(urlLevel);
             setLevelValue("");
             return;

@@ -48,7 +48,7 @@ export default function AlertsCharts({
 
     const getLevelClass = (level) => {
         const value = Number(level);
-        if (value >= 8) return "bg-red-50 text-red-700";
+        if (value >= 10) return "bg-red-50 text-red-700";
         if (value >= 5) return "bg-amber-50 text-amber-700";
         return "bg-emerald-50 text-emerald-700";
     };
