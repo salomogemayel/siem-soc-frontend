@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
-import { getAlerts, getAgents, getManager, getRules } from "../api/wazuhApi";
+import { getAlerts, getAgents, getManager} from "../api/wazuhApi";
 
 import DashboardStats from "../components/dashboard/DashboardStats";
 import RecentAlertsTable from "../components/dashboard/RecentAlertsTable";
@@ -35,10 +35,9 @@ export default function Dashboard() {
         setError("");
 
         try {
-            const [alertsRes, agentsRes, rulesRes, managerRes] = await Promise.all([
+            const [alertsRes, agentsRes, managerRes] = await Promise.all([
                 getAlerts({ page: 1, size: 100, timeRange: timeframe }),
                 getAgents({ page: 1, size: 10 }),
-                getRules({ page: 1, size: 10 }),
                 getManager(),
             ]);
 
@@ -54,10 +53,6 @@ export default function Dashboard() {
             if (agentsRes.data.success) {
                 setAgents(agentsRes.data.data.affected_items || []);
                 setTotalAgents(agentsRes.data.data.total_affected_items || 0);
-            }
-
-            if (rulesRes.data.success) {
-                setTotalRules(rulesRes.data.data.total_affected_items || 0);
             }
 
             if (managerRes.data.success) {

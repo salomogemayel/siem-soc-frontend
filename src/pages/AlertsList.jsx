@@ -6,7 +6,6 @@ import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
 import AlertsTabs from "../components/alerts/AlertsTabs";
-import AlertsSummary from "../components/alerts/AlertsSummary";
 import AlertsFilterBar from "../components/alerts/AlertsFilterBar";
 import AlertsTable from "../components/alerts/AlertsTable";
 import Pagination from "../components/Pagination";
@@ -26,7 +25,6 @@ export default function AlertsList() {
 
     const [alerts, setAlerts] = useState([]);
     const [expanded, setExpanded] = useState(null);
-    const [summary, setSummary] = useState(DEFAULT_SUMMARY);
 
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
@@ -44,7 +42,7 @@ export default function AlertsList() {
 
     const [ruleId, setRuleId] = useState("");
     const [group, setGroup] = useState("");
-    const [alertView, setAlertView] = useState("incident");
+    const [alertView, setAlertView] = useState("raw");
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -63,7 +61,7 @@ export default function AlertsList() {
         const urlRuleId= searchParams.get("rule_id") || searchParams.get("ruleId") || "";
         const urlAgent = searchParams.get("agent") || "";
         const urlGroup = searchParams.get("group") || "";
-        const urlAlertView = searchParams.get("alert_view") || "incident";
+        const urlAlertView = searchParams.get("alert_view") || "raw";
 
         setSearch(urlSearch);
         setRuleId(urlRuleId);
@@ -145,10 +143,23 @@ export default function AlertsList() {
             selectedSeverityParam = "";
         }
 
-        if (selectedSeverity === "critical") {
+        if (selectedSeverity === "low") {
+            selectedLevelGte = 3;
+        }
+
+        if (selectedSeverity === "medium") {
+            selectedLevelGte = 7;
+        }
+
+        if (selectedSeverity === "high") {
             selectedLevelGte = 12;
+        }
+
+        if (selectedSeverity === "critical") {
+            selectedLevelGte = 14;
             selectedSeverityParam = "";
         }
+
 
         const params = {
             page: selectedPage,
@@ -204,7 +215,7 @@ export default function AlertsList() {
             searchParams.get("rule_id") || searchParams.get("ruleId") || "";
         const urlAgent = searchParams.get("agent") || "";
         const urlGroup = searchParams.get("group") || "";
-        const urlAlertView = searchParams.get("alert_view") || "incident";
+        const urlAlertView = searchParams.get("alert_view") || "raw";
 
         let selectedSeverity = urlSeverity;
         let selectedLevelValue = "";
@@ -346,12 +357,11 @@ export default function AlertsList() {
         <>
             <PageHeader
                 title="Security Alerts"
-                description="Monitor detected security alerts from Wazuh Indexer."
             />
 
-            <AlertsTabs />
-
-            <AlertsSummary summary={summary} />
+            <div className="mt-6 mb-0">
+                <AlertsTabs />
+            </div>
 
             <div className="card alert-explorer-card">
                 <AlertsFilterBar
@@ -388,9 +398,8 @@ export default function AlertsList() {
                         onChange={changeAlertView}
                         className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
                     >
-                        <option value="incident">Incident View</option>
-                        <option value="evidence">Evidence View</option>
                         <option value="raw">Raw View</option>
+                        <option value="incident">Incident View</option>
                     </select>
                 </div>
 

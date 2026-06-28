@@ -49,7 +49,7 @@ export default function Profile() {
 
     return (
         <section className="space-y-[18px]">
-            <PageHeader title="My Profile" description="" />
+            <PageHeader title="Profile" description="" />
 
             <div className="grid grid-cols-1 gap-[18px] xl:grid-cols-12">
                 <div className="xl:col-span-5">
@@ -63,7 +63,7 @@ export default function Profile() {
                         </h2>
 
                         <p className="m-0 mt-1 text-sm text-slate-500">
-                            Manage your account information and password securely.
+                            Kelola informasi akun dan password
                         </p>
 
                         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -78,10 +78,10 @@ export default function Profile() {
 
                                 <div>
                                     <strong className="block text-sm text-slate-900">
-                                        Edit Profile
+                                        Edit Profil
                                     </strong>
                                     <span className="text-xs text-slate-500">
-                                        Update name, email, phone, and department
+                                        Edit informasi akun
                                     </span>
                                 </div>
                             </button>
@@ -97,10 +97,10 @@ export default function Profile() {
 
                                 <div>
                                     <strong className="block text-sm text-slate-900">
-                                        Change Password
+                                        Perbarui Password
                                     </strong>
                                     <span className="text-xs text-slate-500">
-                                        Update your account login password
+                                        Perbarui Password
                                     </span>
                                 </div>
                             </button>

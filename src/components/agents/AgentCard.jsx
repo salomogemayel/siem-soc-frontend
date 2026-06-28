@@ -5,7 +5,6 @@ export default function AgentCard({ agent, onSelectAgent }) {
     const navigate = useNavigate();
 
     const insights = agent.insights || {};
-    const risk = insights.risk_level || "Low";
 
     const formatDate = (value) => {
         if (!value) return "-";
@@ -17,15 +16,6 @@ export default function AgentCard({ agent, onSelectAgent }) {
         }
 
         return date.toLocaleString();
-    };
-
-    const getRiskClass = (value) => {
-        const riskValue = String(value || "").toLowerCase();
-
-        if (riskValue === "high") return "bg-red-50 text-red-700";
-        if (riskValue === "medium") return "bg-amber-50 text-amber-700";
-
-        return "bg-emerald-50 text-emerald-700";
     };
 
     const getStatusClass = (value) => {
@@ -62,9 +52,6 @@ export default function AgentCard({ agent, onSelectAgent }) {
                     </p>
                 </div>
 
-                <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${getRiskClass(risk)}`}>
-                    {risk} Risk
-                </span>
             </div>
 
             <div className="space-y-2.5">

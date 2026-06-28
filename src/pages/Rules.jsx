@@ -117,7 +117,6 @@ export default function Rules() {
         <section className="space-y-[18px]">
             <PageHeader
                 title="Wazuh Security Rules"
-                description="Manage and inspect your custom and default security rules."
             />
 
             <div className="flex gap-2 p-1 bg-slate-100 w-fit rounded-xl">

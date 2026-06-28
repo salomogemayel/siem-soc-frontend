@@ -67,9 +67,6 @@ export default function ManagerPipelineStatus({ health }) {
             <h2 className="m-0 text-lg font-semibold text-slate-900">
                 Data Pipeline Status
             </h2>
-            <p className="m-0 mt-1 text-sm text-slate-500">
-                Agent data flow from Wazuh into your custom SOC dashboard.
-            </p>
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-5">
                 {steps.map((step, index) => {

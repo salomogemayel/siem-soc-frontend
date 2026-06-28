@@ -25,6 +25,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         { name: "Notification", path: "/notifications", icon: <Bell size={18} /> },
         { name: "Playbook", path: "/playbook", icon: <BookOpen size={18} /> },
         { name: "Profile", path: "/profile", icon: <User size={18} /> },
+        { name: "Setting", path: "/settings", icon: <Settings size={18} /> },
     ];
 
     const isActive = (path) => {

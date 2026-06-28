@@ -63,7 +63,6 @@ export default function AlertsCharts({
                         <Info size={14} className="text-slate-400 cursor-help" />
                     </Tooltip>
                 </div>
-                <p className="m-0 mt-1 text-sm text-slate-500">Shows how low, medium, and high alerts change over time.</p>
                 <div className="mt-4">
                     <ResponsiveContainer width="100%" height={280}>
                         <AreaChart data={levelChartData}>
@@ -79,7 +78,6 @@ export default function AlertsCharts({
                 </div>
             </div>
 
-            {/* Recent High Alerts */}
             <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm xl:col-span-4">
                 <div className="flex items-center gap-2">
                     <h3 className="m-0 text-base font-semibold text-slate-900">Recent High Alerts</h3>
@@ -87,7 +85,6 @@ export default function AlertsCharts({
                         <Info size={14} className="text-slate-400 cursor-help" />
                     </Tooltip>
                 </div>
-                <p className="m-0 mt-1 text-sm text-slate-500">Latest alerts that require attention. Click an alert to investigate.</p>
                 <div className="mt-4 flex flex-col gap-2.5">
                     {recentHighAlerts.length === 0 ? (
                         <p className="m-0 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No high alerts found.</p>
@@ -105,7 +102,6 @@ export default function AlertsCharts({
                 </div>
             </div>
 
-            {/* Top Triggered Rules */}
             <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm xl:col-span-8">
                 <div className="flex items-center gap-2">
                     <h3 className="m-0 text-base font-semibold text-slate-900">Top Triggered Rules</h3>
@@ -113,7 +109,6 @@ export default function AlertsCharts({
                         <Info size={14} className="text-slate-400 cursor-help" />
                     </Tooltip>
                 </div>
-                <p className="m-0 mt-1 text-sm text-slate-500">Rules that appear most often in recent alerts.</p>
                 <div className="mt-4 overflow-x-auto">
                     <table className="w-full border-collapse text-left">
                         <thead>
@@ -146,7 +141,6 @@ export default function AlertsCharts({
                 </div>
             </div>
 
-            {/* Top Risk Agents */}
             <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm xl:col-span-4">
                 <div className="flex items-center gap-2">
                     <h3 className="m-0 text-base font-semibold text-slate-900">Top Risk Agents</h3>
@@ -154,7 +148,6 @@ export default function AlertsCharts({
                         <Info size={14} className="text-slate-400 cursor-help" />
                     </Tooltip>
                 </div>
-                <p className="m-0 mt-1 text-sm text-slate-500">Agents with the highest alert activity.</p>
                 <div className="mt-4 flex flex-col gap-3">
                     {topAgentsData.length === 0 ? (
                         <p className="m-0 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No agent data found.</p>
@@ -174,7 +167,6 @@ export default function AlertsCharts({
                 </div>
             </div>
 
-            {/* Alert Category Breakdown */}
             <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm xl:col-span-8">
                 <div className="flex items-center gap-2">
                     <h3 className="m-0 text-base font-semibold text-slate-900">Alert Category Breakdown</h3>
@@ -182,7 +174,6 @@ export default function AlertsCharts({
                         <Info size={14} className="text-slate-400 cursor-help" />
                     </Tooltip>
                 </div>
-                <p className="m-0 mt-1 text-sm text-slate-500">Alert distribution based on rule group/category.</p>
                 <div className="mt-4 flex flex-col gap-3">
                     {categoryData.length === 0 ? (
                         <p className="m-0 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No category data found.</p>
@@ -202,7 +193,6 @@ export default function AlertsCharts({
                 </div>
             </div>
 
-            {/* Alert Activity Bar */}
             <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm xl:col-span-4">
                 <div className="flex items-center gap-2">
                     <h3 className="m-0 text-base font-semibold text-slate-900">Alert Activity Bar</h3>
@@ -210,7 +200,6 @@ export default function AlertsCharts({
                         <Info size={14} className="text-slate-400 cursor-help" />
                     </Tooltip>
                 </div>
-                <p className="m-0 mt-1 text-sm text-slate-500">Comparison of alert volume across time.</p>
                 <div className="mt-4">
                     <ResponsiveContainer width="100%" height={280}>
                         <BarChart data={levelChartData}>

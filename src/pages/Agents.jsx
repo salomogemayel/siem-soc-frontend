@@ -6,8 +6,6 @@ import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
 
 import AgentsSummary from "../components/agents/AgentsSummary";
-import AgentsInsightSummary from "../components/agents/AgentsInsightSummary";
-import AgentsToolbar from "../components/agents/AgentsToolbar";
 import AgentCardGrid from "../components/agents/AgentCardGrid";
 import AgentDetailDrawer from "../components/agents/AgentDetailDrawer";
 
@@ -19,8 +17,6 @@ export default function Agents() {
     const [selectedAgent, setSelectedAgent] = useState(null);
 
     const [page] = useState(1);
-    const [search, setSearch] = useState("");
-    const [status, setStatus] = useState("");
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -54,23 +50,6 @@ export default function Agents() {
     useEffect(() => {
         void fetchAgents();
     }, []);
-
-    const applySearch = () => {
-        fetchAgents({
-            search,
-            status,
-        });
-    };
-
-    const resetFilters = () => {
-        setSearch("");
-        setStatus("");
-
-        fetchAgents({
-            search: "",
-            status: "",
-        });
-    };
 
     const summary = useMemo(() => {
         const active = agents.filter((agent) => agent.status === "active").length;
@@ -112,30 +91,15 @@ export default function Agents() {
         <section className="space-y-[18px]">
             <PageHeader
                 title="Agents"
-                description="Monitor endpoint health, status, and security activity."
             />
 
             <AgentsSummary
                 total={summary.total}
                 active={summary.active}
                 disconnected={summary.disconnected}
-            />
-
-            <AgentsInsightSummary
-                active={summary.active}
                 atRisk={summary.atRisk}
                 alerts24h={summary.alerts24h}
                 latestData={summary.latestData}
-            />
-
-            <AgentsToolbar
-                search={search}
-                setSearch={setSearch}
-                status={status}
-                setStatus={setStatus}
-                setPage={() => {}}
-                onApply={applySearch}
-                onReset={resetFilters}
             />
 
             <AgentCardGrid

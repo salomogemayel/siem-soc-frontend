@@ -5,12 +5,9 @@ import PageHeader from "../components/PageHeader";
 import LoadingState from "../components/LoadingState";
 import ErrorState from "../components/ErrorState";
 
-import ManagerHealthOverview from "../components/manager/ManagerHealthOverview";
 import ManagerPipelineStatus from "../components/manager/ManagerPipelineStatus";
 import ManagerIndexHealth from "../components/manager/ManagerIndexHealth";
 import ManagerAgentSummary from "../components/manager/ManagerAgentSummary";
-import ManagerRecentActivity from "../components/manager/ManagerRecentActivity";
-import ManagerAdvancedDetails from "../components/manager/ManagerAdvancedDetails";
 
 export default function Manager() {
     const [manager, setManager] = useState(null);
@@ -48,21 +45,16 @@ export default function Manager() {
         return <ErrorState message={error} />;
     }
 
-    const status = manager?.status || {};
-    const info = manager?.info || {};
     const health = manager?.health || {};
     const metrics = manager?.metrics || {};
-    const latest = manager?.latest || {};
     const indices = manager?.indices || {};
 
     return (
         <section className="space-y-[18px]">
             <PageHeader
-                title="SIEM Health Center"
-                description="Monitor Wazuh infrastructure, data pipeline, index health, and agent connectivity."
+                title="SIEM Health and Connectivity"
             />
 
-            {/*<ManagerHealthOverview health={health} latest={latest} />*/}
 
             <ManagerPipelineStatus health={health} />
 
@@ -76,9 +68,6 @@ export default function Manager() {
                 </div>
             </div>
 
-            <ManagerRecentActivity latest={latest} metrics={metrics} />
-
-            <ManagerAdvancedDetails status={status} info={info} />
         </section>
     );
 }

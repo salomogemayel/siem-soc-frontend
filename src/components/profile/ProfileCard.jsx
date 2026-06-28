@@ -5,7 +5,6 @@ export default function ProfileCard({ user }) {
         ["Full Name", user?.name || "-"],
         ["Email", user?.email || "-"],
         ["Role", user?.role || "SOC Analyst"],
-        ["Last Login", user?.last_login_at || "-"],
     ];
 
     return (
@@ -31,13 +30,6 @@ export default function ProfileCard({ user }) {
                             </strong>
                         </div>
                     ))}
-
-                    <div className="flex justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm">
-                        <span className="text-slate-500">Status</span>
-                        <strong className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
-                            {user?.status || "active"}
-                        </strong>
-                    </div>
                 </div>
             </div>
         </div>

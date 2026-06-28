@@ -31,7 +31,11 @@ export default function UserDropdown() {
                 Profile
             </button>
 
-            <button type="button" className={itemClass}>
+            <button
+                type="button"
+                className={itemClass}
+                onClick={() => navigate("/settings")}
+            >
                 <Settings size={16} />
                 Settings
             </button>

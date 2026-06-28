@@ -91,6 +91,7 @@ export const getLogs = ({
                             dateFrom = "",
                             dateTo = "",
                             logType = "",
+                            logScope = "cis",
                         } = {}) =>
     api.get("/wazuh/logs", {
         params: {
@@ -105,6 +106,7 @@ export const getLogs = ({
             date_from: dateFrom,
             date_to: dateTo,
             log_type: logType,
+            log_scope: logScope,
         },
     });
 

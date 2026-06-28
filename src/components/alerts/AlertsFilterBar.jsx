@@ -39,9 +39,6 @@ export default function AlertsFilterBar({
                 <h3 className="m-0 text-lg font-semibold text-slate-900">
                     Alert Filters
                 </h3>
-                <p className="m-0 mt-1 text-sm text-slate-500">
-                    Refine alerts by keyword, time, severity, agent, and rule details.
-                </p>
             </div>
 
             <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-4">
@@ -175,7 +172,6 @@ export default function AlertsFilterBar({
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
-                        <option value="critical">Critical</option>
                         <option value="custom">Custom Level</option>
                     </select>
                 </div>

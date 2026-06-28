@@ -119,29 +119,6 @@ export default function AgentDetailDrawer({ agent, onClose }) {
                         </div>
                     </div>
                 </div>
-
-                <div>
-                    <h3 className="mb-3 text-base font-semibold text-slate-900">
-                        Monitoring Coverage
-                    </h3>
-
-                    <div className="space-y-2.5">
-                        {[
-                            ["Log Collection", "Active"],
-                            ["Security Alerts", "Active"],
-                            ["Syscollector", agent.os ? "Available" : "Unknown"],
-                            ["Vulnerability Data", "Future Module"],
-                        ].map(([label, value]) => (
-                            <div
-                                key={label}
-                                className="flex justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm"
-                            >
-                                <span className="text-slate-500">{label}</span>
-                                <strong className="text-slate-900">{value}</strong>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             </aside>
         </div>
     );

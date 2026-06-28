@@ -60,12 +60,10 @@ export default function AlertsSummary({ summary }) {
                 const Icon = item.icon;
 
                 return (
-                    /* Tambahkan w-full agar tooltip mengisi penuh slot grid */
                     <Tooltip key={item.title} content={item.description} icon={Info}>
                         <button
                             type="button"
                             onClick={item.onClick}
-                            /* w-full dan min-w-0 menjaga lebar tetap konsisten di dalam grid */
                             className="w-full min-w-0 flex items-start gap-3.5 rounded-[14px] border border-slate-100 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md cursor-help"
                         >
                             <div className={`grid h-[44px] w-[44px] shrink-0 place-items-center rounded-xl ${item.iconClass}`}>

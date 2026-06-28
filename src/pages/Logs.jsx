@@ -24,14 +24,12 @@ const DEFAULT_INSIGHTS = {
 };
 
 export default function Logs() {
-    const [totalRelation, setTotalRelation] = useState("eq");
-    const [logInsights, setLogInsights] = useState(DEFAULT_INSIGHTS);
-
     const [logs, setLogs] = useState([]);
     const [expanded, setExpanded] = useState(null);
 
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
+    const [totalRelation, setTotalRelation] = useState("eq");
 
     const [search, setSearch] = useState("");
     const [agentId, setAgentId] = useState("");
@@ -39,9 +37,13 @@ export default function Logs() {
     const [decoder, setDecoder] = useState("");
     const [program, setProgram] = useState("");
     const [timeRange, setTimeRange] = useState("1h");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
     const [logType, setLogType] = useState("");
+    const [logScope, setLogScope] = useState("cis");
     const [viewMode, setViewMode] = useState("simple");
 
+    const [logInsights, setLogInsights] = useState(DEFAULT_INSIGHTS);
     const [filterOptions, setFilterOptions] = useState({
         agents: [],
         locations: [],
@@ -54,19 +56,17 @@ export default function Logs() {
 
     const totalPages = Math.ceil(total / PAGE_SIZE);
 
-    const [dateFrom, setDateFrom] = useState("");
-    const [dateTo, setDateTo] = useState("");
-
     const fetchLogs = async (overrides = {}) => {
         setLoading(true);
         setError("");
 
+        const selectedPage = overrides.page ?? page;
         const selectedTimeRange = overrides.timeRange ?? timeRange;
         const selectedDateFrom = overrides.dateFrom ?? dateFrom;
         const selectedDateTo = overrides.dateTo ?? dateTo;
 
         const params = {
-            page,
+            page: selectedPage,
             size: PAGE_SIZE,
             search,
             agentId,
@@ -83,6 +83,7 @@ export default function Logs() {
                     ? new Date(selectedDateTo).toISOString()
                     : "",
             logType,
+            logScope,
             ...overrides,
         };
 
@@ -122,25 +123,39 @@ export default function Logs() {
 
     useEffect(() => {
         void fetchLogs();
-    }, [page]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, logScope]);
+
+    const changeLogScope = (scope) => {
+        setLogScope(scope);
+        setExpanded(null);
+
+        if (page !== 1) {
+            setPage(1);
+        }
+    };
+
     const applySearch = () => {
         if (timeRange === "custom" && (!dateFrom || !dateTo)) {
             setError("Please select both From and To date for custom range.");
             return;
         }
 
-        setPage(1);
+        setExpanded(null);
 
-        fetchLogs({
-            page: 1,
-            timeRange,
-            dateFrom,
-            dateTo,
-        });
+        if (page === 1) {
+            fetchLogs({
+                page: 1,
+                timeRange,
+                dateFrom,
+                dateTo,
+            });
+        } else {
+            setPage(1);
+        }
     };
 
     const resetFilters = () => {
-        setPage(1);
         setSearch("");
         setAgentId("");
         setLocation("");
@@ -150,55 +165,25 @@ export default function Logs() {
         setDateFrom("");
         setDateTo("");
         setLogType("");
+        setViewMode("simple");
+        setExpanded(null);
 
-        fetchLogs({
-            page: 1,
-            search: "",
-            agentId: "",
-            location: "",
-            decoder: "",
-            program: "",
-            timeRange: "1h",
-            dateFrom: "",
-            dateTo: "",
-            logType: "",
-        });
-    };
-
-    const handleQuickFilter = (type) => {
-        setPage(1);
-
-        if (type === "auth") {
-            setLocation("/var/log/auth.log");
-            setProgram("");
-            setDecoder("");
-            fetchLogs({ page: 1, location: "/var/log/auth.log", program: "", decoder: "" });
-        }
-
-        if (type === "sudo") {
-            setProgram("sudo");
-            setLocation("");
-            setDecoder("");
-            fetchLogs({ page: 1, program: "sudo", location: "", decoder: "" });
-        }
-
-        if (type === "system") {
-            setProgram("systemd");
-            setLocation("");
-            setDecoder("");
-            fetchLogs({ page: 1, program: "systemd", location: "", decoder: "" });
-        }
-
-        if (type === "rootcheck") {
-            setLocation("rootcheck");
-            setProgram("");
-            setDecoder("");
-            fetchLogs({ page: 1, location: "rootcheck", program: "", decoder: "" });
-        }
-
-        if (type === "alerts") {
-            setSearch("rule");
-            fetchLogs({ page: 1, search: "rule" });
+        if (page === 1) {
+            fetchLogs({
+                page: 1,
+                search: "",
+                agentId: "",
+                location: "",
+                decoder: "",
+                program: "",
+                timeRange: "1h",
+                dateFrom: "",
+                dateTo: "",
+                logType: "",
+                viewMode: "simple",
+            });
+        } else {
+            setPage(1);
         }
     };
 
@@ -265,8 +250,13 @@ export default function Logs() {
         return pages;
     }, [page, totalPages]);
 
-    if (loading) return <LoadingState message="Loading raw logs..." />;
-    if (error) return <ErrorState message={error} />;
+    if (loading && logs.length === 0) {
+        return <LoadingState message="Loading raw logs..." />;
+    }
+
+    if (error) {
+        return <ErrorState message={error} />;
+    }
 
     const totalLabel =
         totalRelation === "gte" ? `${total.toLocaleString()}+` : total.toLocaleString();
@@ -278,9 +268,33 @@ export default function Logs() {
         <section className="space-y-[18px]">
             <PageHeader
                 title="Raw Logs"
-                description="Telusuri log keamanan yang tersimpan di Wazuh"
             />
 
+            <div className="flex w-fit gap-1 rounded-xl bg-slate-100 p-1">
+                <button
+                    type="button"
+                    onClick={() => changeLogScope("cis")}
+                    className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                        logScope === "cis"
+                            ? "bg-white text-blue-600 shadow-sm"
+                            : "text-slate-500 hover:text-slate-700"
+                    }`}
+                >
+                    CIS Logs
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => changeLogScope("other")}
+                    className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                        logScope === "other"
+                            ? "bg-white text-blue-600 shadow-sm"
+                            : "text-slate-500 hover:text-slate-700"
+                    }`}
+                >
+                    Other Logs
+                </button>
+            </div>
             <LogsSummary insights={logInsights} />
 
             <LogsFilterBar
@@ -312,7 +326,15 @@ export default function Logs() {
                 onExportJSON={exportJSON}
             />
 
-            <div className="rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
+            <div className="relative rounded-[14px] border border-slate-100 bg-white p-4 shadow-sm">
+                {loading && logs.length > 0 && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-[14px] bg-white/60 backdrop-blur-sm">
+                        <span className="text-sm font-medium text-slate-700">
+                            Updating...
+                        </span>
+                    </div>
+                )}
+
                 <LogsTable
                     logs={logs}
                     expanded={expanded}
@@ -330,10 +352,15 @@ export default function Logs() {
                     />
 
                     <div className="text-sm text-slate-500">
-                        Showing <strong className="text-slate-900">{logs.length}</strong> logs • Total{" "}
-                        <strong className="text-slate-900">{totalLabel}</strong> • Page{" "}
+                        Showing{" "}
+                        <strong className="text-slate-900">{logs.length}</strong>{" "}
+                        logs • Total{" "}
+                        <strong className="text-slate-900">{totalLabel}</strong>{" "}
+                        • Page{" "}
                         <strong className="text-slate-900">{page}</strong> of{" "}
-                        <strong className="text-slate-900">{paginationTotalPages || 1}</strong>
+                        <strong className="text-slate-900">
+                            {paginationTotalPages || 1}
+                        </strong>
                     </div>
                 </div>
             </div>

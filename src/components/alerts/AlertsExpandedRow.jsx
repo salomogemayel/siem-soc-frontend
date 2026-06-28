@@ -33,10 +33,7 @@ export default function AlertExpandedRow({ alert }) {
 
                         <p className="m-0">
                             <strong>Correlation:</strong>{" "}
-                            {alert.correlation_role || "standalone"}
-                            {alert.correlation_role === "parent"
-                                ? ` (${alert.child_count || 0} evidence)`
-                                : ""}
+                            {hasEvidence ? `incident (${childAlerts.length} evidence)` : "standalone"}
                         </p>
                     </div>
 
@@ -48,7 +45,7 @@ export default function AlertExpandedRow({ alert }) {
                         <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/40 p-3">
                             <div className="mb-3 flex items-center justify-between">
                                 <h4 className="m-0 text-sm font-bold text-slate-800">
-                                    Related Evidence
+                                    Incident Evidence
                                 </h4>
 
                                 <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700">
